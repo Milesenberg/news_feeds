@@ -11,7 +11,8 @@ rss_feeds = [
     "https://www.aljazeera.com/where/palestine/rss.xml",
     "https://blog.playstation.com/feed",
     "https://aiartblog.com/feed",
-    "http://bristolpost.co.uk/whats-on/?service=rss", # NEW BRISTOL WHAT'S ON FEED
+    "http://bristolpost.co.uk/news/?service=rss",
+    "http://bristolpost.co.uk/whats-on/?service=rss",
     "https://www.somersetlive.co.uk/?service=rss",
     "https://netpol.org/feed/",
     "https://www.fujairahobserver.com/category/news/local-news/",
@@ -54,6 +55,11 @@ def get_headlines():
             for entry in feed.entries:
                 clean_summary = html.unescape(entry.get('summary', 'No summary available.'))
                 clean_summary = re.sub('<.*?>', '', clean_summary)
+
+                # Trim summary if it's too long
+                MAX_SUMMARY_LENGTH = 250
+                if len(clean_summary) > MAX_SUMMARY_LENGTH:
+                    clean_summary = clean_summary[:MAX_SUMMARY_LENGTH] + "..."
 
                 image_url = None
                 if 'media_content' in entry and len(entry.media_content) > 0:
