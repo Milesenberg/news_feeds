@@ -85,6 +85,12 @@
                         title.textContent = '• ' + item.title;
                         headlineDiv.appendChild(title);
 
+                        // Create and append the date and outlet info
+                        const info = document.createElement('div');
+                        info.className = 'headline-info';
+                        info.textContent = `${item.outlet} - ${item.published_formatted}`;
+                        headlineDiv.appendChild(info);
+
                         // Create and append the image if it exists
                         if (item.image_url) {
                             const image = document.createElement('img');
@@ -98,12 +104,6 @@
                         summary.className = 'headline-summary';
                         summary.textContent = item.summary;
                         headlineDiv.appendChild(summary);
-
-                        // Create and append the date and outlet info
-                        const info = document.createElement('div');
-                        info.className = 'headline-info';
-                        info.textContent = `${item.outlet} - ${item.published_formatted}`;
-                        headlineDiv.appendChild(info);
 
                         // Create and append the link
                         const link = document.createElement('a');
