@@ -29,11 +29,35 @@ rss_feeds = [
     "https://electronicintifada.net/rss"  # New RSS Feed for Electronic Intifada
 ]
 
+# A dictionary mapping outlet names to color classes.
+# You can customize these colors.
+source_colors = {
+    "MintPress News": "color-1",
+    "Al Jazeera English": "color-2",
+    "PlayStation.Blog": "color-3",
+    "AI Art Blog": "color-4",
+    "Bristol Post": "color-5",
+    "SomersetLive": "color-6",
+    "Netpol": "color-7",
+    "Fujairah Observer": "color-8",
+    "Catalan News": "color-9",
+    "Health Service Journal": "color-10",
+    "NHS England": "color-1", # Reusing colors
+    "The Keyword": "color-2", # Reusing colors
+    "Wired": "color-3", # Reusing colors
+    "The Register": "color-4", # Reusing colors
+    "Marvel Snap Zone": "color-5", # Reusing colors
+    "Palestine Chronicle": "color-6", # Reusing colors
+    "Declassified UK": "color-7", # Reusing colors
+    "Bristol247": "color-8", # Reusing colors
+    "Middle East Eye": "color-9", # Reusing colors
+    "The Electronic Intifada": "color-10", # Reusing colors
+}
+
+
 def get_headlines():
     """
-    Fetches headlines, summaries, links, and outlet from the list of RSS feeds.
-    Returns a list of dictionaries with 'title', 'summary', 'link', 'outlet',
-    'published_formatted', and optionally 'image_url'.
+    Fetches headlines, summaries, links, outlet, and color from the list of RSS feeds.
     """
     all_headlines = []
 
@@ -50,6 +74,9 @@ def get_headlines():
             # Specific fix for Middle East Eye's feed name
             if url == "https://www.middleeasteye.net/rss":
                 outlet_name = "Middle East Eye"
+
+            # Get the color class from the dictionary, defaulting to 'default-color'
+            color_class = source_colors.get(outlet_name, "default-color")
 
             for entry in feed.entries:
                 clean_summary = html.unescape(entry.get('summary', 'No summary available.'))
@@ -70,6 +97,7 @@ def get_headlines():
                         'link': entry.link,
                         'published': entry.published_parsed,  # Used for sorting
                         'published_formatted': published_date, # Used for display
+                        'color': color_class,  # Add the color class
                     })
         except Exception:
             pass
