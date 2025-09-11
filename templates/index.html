@@ -32,6 +32,8 @@
                         const titleLink = document.createElement('a');
                         titleLink.href = headline.link;
                         titleLink.textContent = headline.title;
+                        titleLink.target = "_blank";
+                        titleLink.rel = "noopener noreferrer";
                         
                         const titleHeading = document.createElement('h2');
                         titleHeading.appendChild(outletSpan);
