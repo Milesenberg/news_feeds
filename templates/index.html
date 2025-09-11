@@ -23,11 +23,6 @@
         .headline:last-child {
             border-bottom: none;
         }
-        .headline-outlet {
-            font-size: 0.8em;
-            color: #888;
-            margin-bottom: 5px;
-        }
         .headline-title {
             font-size: 1.2em;
             font-weight: bold;
@@ -45,46 +40,77 @@
             color: #6699ff;
             text-decoration: underline;
         }
+        .headline-link:hover {
+            color: #99bbff;
+        }
+        .headline-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        .headline-info {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Your Personalized News Feed</h1>
+        <h1>Latest Headlines</h1>
         <div id="news-container">
-            </div>
+            <p>Loading headlines...</p>
+        </div>
     </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener("DOMContentLoaded", function() {
             const newsContainer = document.getElementById('news-container');
-            
+
             fetch('/headlines')
                 .then(response => response.json())
                 .then(data => {
+                    newsContainer.innerHTML = ''; // Clear the "Loading..." message
                     data.forEach(item => {
                         const headlineDiv = document.createElement('div');
                         headlineDiv.className = 'headline';
 
-                        const outlet = document.createElement('div');
-                        outlet.className = 'headline-outlet';
-                        outlet.textContent = item.outlet;
-
+                        // Create and append the title
                         const title = document.createElement('div');
                         title.className = 'headline-title';
                         title.textContent = '• ' + item.title;
+                        headlineDiv.appendChild(title);
 
+                        // Create and append the image if it exists
+                        if (item.image_url) {
+                            const image = document.createElement('img');
+                            image.className = 'headline-image';
+                            image.src = item.image_url;
+                            headlineDiv.appendChild(image);
+                        }
+
+                        // Create and append the summary
                         const summary = document.createElement('p');
                         summary.className = 'headline-summary';
                         summary.textContent = item.summary;
+                        headlineDiv.appendChild(summary);
 
+                        // Create and append the date and outlet info
+                        const info = document.createElement('div');
+                        info.className = 'headline-info';
+                        info.textContent = `${item.outlet} - ${item.published_formatted}`;
+                        headlineDiv.appendChild(info);
+
+                        // Create and append the link
                         const link = document.createElement('a');
                         link.className = 'headline-link';
                         link.href = item.link;
                         link.textContent = 'Read more here...';
-                        link.target = '_blank'; // Open in new tab
-
-                        headlineDiv.appendChild(outlet);
-                        headlineDiv.appendChild(title);
-                        headlineDiv.appendChild(summary);
+                        link.target = '_blank';
                         headlineDiv.appendChild(link);
                         
                         newsContainer.appendChild(headlineDiv);
