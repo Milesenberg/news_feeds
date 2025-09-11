@@ -11,7 +11,6 @@ rss_feeds = [
     "https://www.aljazeera.com/where/palestine/rss.xml",
     "https://blog.playstation.com/feed",
     "https://aiartblog.com/feed",
-    "http://bristolpost.co.uk/news/?service=rss", # NEW BRISTOL NEWS FEED
     "http://bristolpost.co.uk/whats-on/?service=rss", # NEW BRISTOL WHAT'S ON FEED
     "https://www.somersetlive.co.uk/?service=rss",
     "https://netpol.org/feed/",
