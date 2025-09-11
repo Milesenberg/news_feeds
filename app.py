@@ -2,6 +2,7 @@ import feedparser
 from flask import Flask, jsonify, render_template
 import html
 import re
+import time
 from urllib.parse import urlparse
 
 # This is the list of verified, working RSS feeds.
@@ -31,7 +32,8 @@ rss_feeds = [
 def get_headlines():
     """
     Fetches headlines, summaries, links, and outlet from the list of RSS feeds.
-    Returns a list of dictionaries with 'title', 'summary', 'link', and 'outlet'.
+    Returns a list of dictionaries with 'title', 'summary', 'link', 'outlet',
+    'published_formatted', and optionally 'image_url'.
     """
     all_headlines = []
 
@@ -41,24 +43,36 @@ def get_headlines():
             if not feed.entries:
                 continue
 
-            # Get a clean outlet name
             outlet_name = feed.feed.get('title', 'Unknown Outlet')
             if not outlet_name:
-                # Fallback to the domain name if the title is empty
                 outlet_name = urlparse(url).netloc.replace('www.', '')
+
+            # Specific fix for Middle East Eye's feed name
+            if url == "https://www.middleeasteye.net/rss":
+                outlet_name = "Middle East Eye"
 
             for entry in feed.entries:
                 clean_summary = html.unescape(entry.get('summary', 'No summary available.'))
                 clean_summary = re.sub('<.*?>', '', clean_summary)
+
+                image_url = None
+                if 'media_content' in entry and len(entry.media_content) > 0:
+                    image_url = entry.media_content[0].get('url')
+                elif 'enclosures' in entry and len(entry.enclosures) > 0:
+                    if entry.enclosures[0].get('type', '').startswith('image/'):
+                        image_url = entry.enclosures[0].get('href')
                 
                 # Check if 'published_parsed' exists before appending to avoid errors
                 if hasattr(entry, 'published_parsed'):
+                    published_date = time.strftime('%B %d, %Y - %I:%M %p', entry.published_parsed)
                     all_headlines.append({
                         'outlet': outlet_name,
                         'title': entry.title,
                         'summary': clean_summary,
                         'link': entry.link,
-                        'published': entry.published_parsed  # Add the publication date
+                        'published': entry.published_parsed,  # Used for sorting
+                        'published_formatted': published_date, # Used for display
+                        'image_url': image_url
                     })
         except Exception:
             pass
