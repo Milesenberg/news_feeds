@@ -107,18 +107,19 @@ def get_headlines():
         except Exception:
             pass
             
+    # Sort articles within each source group by date, from newest to oldest
+    for source in articles_by_source:
+        articles_by_source[source].sort(key=lambda x: x['published'], reverse=True)
+
     # --- NEW NORMALIZATION LOGIC ---
     normalized_headlines = []
     max_per_feed = 5 # Set the maximum number of articles per feed
 
-    for source in articles_by_source:
-        # Sort articles for each source by date, from newest to oldest
-        articles_by_source[source].sort(key=lambda x: x['published'], reverse=True)
-        # Take a slice of the top articles and add them to the main list
-        normalized_headlines.extend(articles_by_source[source][:max_per_feed])
-    
-    # Finally, sort the combined list by date, from newest to oldest
-    # REMOVED THIS LINE: normalized_headlines.sort(key=lambda x: x['published'], reverse=True)
+    # Interleave the articles from each source
+    for i in range(max_per_feed):
+        for source in articles_by_source:
+            if i < len(articles_by_source[source]):
+                normalized_headlines.append(articles_by_source[source][i])
     
     return normalized_headlines
     # --- END NEW LOGIC ---
