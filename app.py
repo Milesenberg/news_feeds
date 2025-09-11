@@ -118,7 +118,7 @@ def get_headlines():
         normalized_headlines.extend(articles_by_source[source][:max_per_feed])
     
     # Finally, sort the combined list by date, from newest to oldest
-    normalized_headlines.sort(key=lambda x: x['published'], reverse=True)
+    # REMOVED THIS LINE: normalized_headlines.sort(key=lambda x: x['published'], reverse=True)
     
     return normalized_headlines
     # --- END NEW LOGIC ---
