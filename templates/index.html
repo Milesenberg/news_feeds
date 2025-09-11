@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personalized News</title>
+    <title>Milesenberg News</title>
     <style>
         body {
             background-color: black;
@@ -39,46 +39,78 @@
             font-size: 0.9em;
             color: #6699ff;
             text-decoration: underline;
-            cursor: pointer;
+        }
+        .headline-link:hover {
+            color: #99bbff;
+        }
+        .headline-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        .headline-info {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Latest News Headlines</h1>
+        <h1>Milesenberg Headlines</h1>
         <div id="news-container">
             <p>Loading headlines...</p>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener("DOMContentLoaded", function() {
             const newsContainer = document.getElementById('news-container');
 
             fetch('/headlines')
                 .then(response => response.json())
                 .then(data => {
-                    newsContainer.innerHTML = ''; // Clear loading message
+                    newsContainer.innerHTML = ''; // Clear the "Loading..." message
                     data.forEach(item => {
                         const headlineDiv = document.createElement('div');
                         headlineDiv.className = 'headline';
 
+                        // Create and append the title
                         const title = document.createElement('div');
                         title.className = 'headline-title';
                         title.textContent = '• ' + item.title;
+                        headlineDiv.appendChild(title);
 
+                        // Create and append the date and outlet info
+                        const info = document.createElement('div');
+                        info.className = 'headline-info';
+                        info.textContent = `${item.outlet} - ${item.published_formatted}`;
+                        headlineDiv.appendChild(info);
+
+                        // Create and append the image if it exists
+                        if (item.image_url) {
+                            const image = document.createElement('img');
+                            image.className = 'headline-image';
+                            image.src = item.image_url;
+                            headlineDiv.appendChild(image);
+                        }
+
+                        // Create and append the summary
                         const summary = document.createElement('p');
                         summary.className = 'headline-summary';
                         summary.textContent = item.summary;
+                        headlineDiv.appendChild(summary);
 
+                        // Create and append the link
                         const link = document.createElement('a');
                         link.className = 'headline-link';
                         link.href = item.link;
                         link.textContent = 'Read more here...';
-                        link.target = '_blank'; // Open in new tab
-
-                        headlineDiv.appendChild(title);
-                        headlineDiv.appendChild(summary);
+                        link.target = '_blank';
                         headlineDiv.appendChild(link);
                         
                         newsContainer.appendChild(headlineDiv);
