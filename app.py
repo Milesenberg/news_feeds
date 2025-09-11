@@ -2,6 +2,7 @@ import feedparser
 from flask import Flask, jsonify, render_template
 import html
 import re
+from urllib.parse import urlparse
 
 # This is the list of verified, working RSS feeds.
 rss_feeds = [
@@ -29,8 +30,8 @@ rss_feeds = [
 
 def get_headlines():
     """
-    Fetches headlines, summaries, and links from the list of RSS feeds.
-    Returns a list of dictionaries with 'title', 'summary', and 'link'.
+    Fetches headlines, summaries, links, and outlet from the list of RSS feeds.
+    Returns a list of dictionaries with 'title', 'summary', 'link', and 'outlet'.
     """
     all_headlines = []
 
@@ -40,11 +41,18 @@ def get_headlines():
             if not feed.entries:
                 continue
 
+            # Get a clean outlet name
+            outlet_name = feed.feed.get('title', 'Unknown Outlet')
+            if not outlet_name:
+                # Fallback to the domain name if the title is empty
+                outlet_name = urlparse(url).netloc.replace('www.', '')
+
             for entry in feed.entries:
                 clean_summary = html.unescape(entry.get('summary', 'No summary available.'))
                 clean_summary = re.sub('<.*?>', '', clean_summary)
                 
                 all_headlines.append({
+                    'outlet': outlet_name,
                     'title': entry.title,
                     'summary': clean_summary,
                     'link': entry.link
@@ -63,7 +71,7 @@ def headlines_json():
     headlines = get_headlines()
     return jsonify(headlines)
 
-# Define a route for the main page that will display the webpage
+# Define a route to serve the HTML page
 @app.route("/")
 def index():
     return render_template("index.html")
