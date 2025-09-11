@@ -51,15 +51,20 @@ def get_headlines():
                 clean_summary = html.unescape(entry.get('summary', 'No summary available.'))
                 clean_summary = re.sub('<.*?>', '', clean_summary)
                 
-                all_headlines.append({
-                    'outlet': outlet_name,
-                    'title': entry.title,
-                    'summary': clean_summary,
-                    'link': entry.link
-                })
+                # Check if 'published_parsed' exists before appending to avoid errors
+                if hasattr(entry, 'published_parsed'):
+                    all_headlines.append({
+                        'outlet': outlet_name,
+                        'title': entry.title,
+                        'summary': clean_summary,
+                        'link': entry.link,
+                        'published': entry.published_parsed  # Add the publication date
+                    })
         except Exception:
             pass
             
+    # Sort the headlines by date, from newest to oldest
+    all_headlines.sort(key=lambda x: x['published'], reverse=True)
     return all_headlines
 
 # Create a Flask web application instance
