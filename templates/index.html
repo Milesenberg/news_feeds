@@ -23,6 +23,11 @@
         .headline:last-child {
             border-bottom: none;
         }
+        .headline-outlet {
+            font-size: 0.8em;
+            color: #888;
+            margin-bottom: 5px;
+        }
         .headline-title {
             font-size: 1.2em;
             font-weight: bold;
@@ -39,29 +44,29 @@
             font-size: 0.9em;
             color: #6699ff;
             text-decoration: underline;
-            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Latest News Headlines</h1>
+        <h1>Your Personalized News Feed</h1>
         <div id="news-container">
-            <p>Loading headlines...</p>
-        </div>
+            </div>
     </div>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
             const newsContainer = document.getElementById('news-container');
-
+            
             fetch('/headlines')
                 .then(response => response.json())
                 .then(data => {
-                    newsContainer.innerHTML = ''; // Clear loading message
                     data.forEach(item => {
                         const headlineDiv = document.createElement('div');
                         headlineDiv.className = 'headline';
+
+                        const outlet = document.createElement('div');
+                        outlet.className = 'headline-outlet';
+                        outlet.textContent = item.outlet;
 
                         const title = document.createElement('div');
                         title.className = 'headline-title';
@@ -77,6 +82,7 @@
                         link.textContent = 'Read more here...';
                         link.target = '_blank'; // Open in new tab
 
+                        headlineDiv.appendChild(outlet);
                         headlineDiv.appendChild(title);
                         headlineDiv.appendChild(summary);
                         headlineDiv.appendChild(link);
