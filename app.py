@@ -59,9 +59,9 @@ def get_headlines():
     """
     Fetches headlines, summaries, links, outlet, and color from the list of RSS feeds.
     
-    This function now also normalizes the feeds to ensure a balanced display of articles.
+    This function now normalizes the feeds to ensure a balanced display of articles.
     """
-    all_headlines = []
+    articles_by_source = {}
 
     for url in rss_feeds:
         try:
@@ -92,7 +92,7 @@ def get_headlines():
                 # Check if 'published_parsed' exists before appending to avoid errors
                 if hasattr(entry, 'published_parsed'):
                     published_date = time.strftime('%B %d, %Y - %I:%M %p', entry.published_parsed)
-                    all_headlines.append({
+                    article = {
                         'outlet': outlet_name,
                         'title': entry.title,
                         'summary': clean_summary,
@@ -100,30 +100,28 @@ def get_headlines():
                         'published': entry.published_parsed,  # Used for sorting
                         'published_formatted': published_date, # Used for display
                         'color': color_class,  # Add the color class
-                    })
+                    }
+                    if outlet_name not in articles_by_source:
+                        articles_by_source[outlet_name] = []
+                    articles_by_source[outlet_name].append(article)
         except Exception:
             pass
             
-    # Sort the headlines by date, from newest to oldest
-    all_headlines.sort(key=lambda x: x['published'], reverse=True)
-    
-    # --- UPDATED NORMALIZATION LOGIC ---
+    # --- NEW NORMALIZATION LOGIC ---
     normalized_headlines = []
-    source_counts = {}
     max_per_feed = 5 # Set the maximum number of articles per feed
 
-    for article in all_headlines:
-        source = article.get('outlet')
-        if source:
-            if source not in source_counts:
-                source_counts[source] = 0
-            
-            if source_counts[source] < max_per_feed:
-                normalized_headlines.append(article)
-                source_counts[source] += 1
+    for source in articles_by_source:
+        # Sort articles for each source by date, from newest to oldest
+        articles_by_source[source].sort(key=lambda x: x['published'], reverse=True)
+        # Take a slice of the top articles and add them to the main list
+        normalized_headlines.extend(articles_by_source[source][:max_per_feed])
+    
+    # Finally, sort the combined list by date, from newest to oldest
+    normalized_headlines.sort(key=lambda x: x['published'], reverse=True)
     
     return normalized_headlines
-    # --- END UPDATED LOGIC ---
+    # --- END NEW LOGIC ---
 
 # Create a Flask web application instance
 app = Flask(__name__)
