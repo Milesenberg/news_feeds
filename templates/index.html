@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized News</title>
+    <style>
+        body {
+            background-color: black;
+            color: #c0c0c0;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .headline {
+            border-bottom: 1px solid #444;
+            padding: 15px 0;
+        }
+        .headline:last-child {
+            border-bottom: none;
+        }
+        .headline-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
+        }
+        .headline-summary {
+            font-size: 0.9em;
+            color: #c0c0c0;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+        .headline-link {
+            font-size: 0.9em;
+            color: #6699ff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Latest News Headlines</h1>
+        <div id="news-container">
+            <p>Loading headlines...</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const newsContainer = document.getElementById('news-container');
+
+            fetch('/headlines')
+                .then(response => response.json())
+                .then(data => {
+                    newsContainer.innerHTML = ''; // Clear loading message
+                    data.forEach(item => {
+                        const headlineDiv = document.createElement('div');
+                        headlineDiv.className = 'headline';
+
+                        const title = document.createElement('div');
+                        title.className = 'headline-title';
+                        title.textContent = '• ' + item.title;
+
+                        const summary = document.createElement('p');
+                        summary.className = 'headline-summary';
+                        summary.textContent = item.summary;
+
+                        const link = document.createElement('a');
+                        link.className = 'headline-link';
+                        link.href = item.link;
+                        link.textContent = 'Read more here...';
+                        link.target = '_blank'; // Open in new tab
+
+                        headlineDiv.appendChild(title);
+                        headlineDiv.appendChild(summary);
+                        headlineDiv.appendChild(link);
+                        
+                        newsContainer.appendChild(headlineDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    newsContainer.innerHTML = '<p>Failed to load headlines. Please try again later.</p>';
+                });
+        });
+    </script>
+</body>
+</html>
