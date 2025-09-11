@@ -55,32 +55,11 @@ source_colors = {
 }
 
 
-# --- ADDED: Normalization function to limit articles per feed ---
-def normalize_feeds(articles, max_per_feed=5):
-    """
-    Normalizes a list of articles by limiting the number of entries
-    from each source.
-    """
-    normalized_articles = []
-    source_counts = {}
-
-    for article in articles:
-        source = article.get('outlet')
-        if source:
-            if source not in source_counts:
-                source_counts[source] = 0
-            
-            if source_counts[source] < max_per_feed:
-                normalized_articles.append(article)
-                source_counts[source] += 1
-    
-    return normalized_articles
-# --- END ADDITION ---
-
-
 def get_headlines():
     """
     Fetches headlines, summaries, links, outlet, and color from the list of RSS feeds.
+    
+    This function now also normalizes the feeds to ensure a balanced display of articles.
     """
     all_headlines = []
 
@@ -128,11 +107,23 @@ def get_headlines():
     # Sort the headlines by date, from newest to oldest
     all_headlines.sort(key=lambda x: x['published'], reverse=True)
     
-    # --- ADDED: Normalize the list of articles before returning ---
-    normalized_headlines = normalize_feeds(all_headlines, max_per_feed=10) # Change this number to adjust the limit
+    # --- UPDATED NORMALIZATION LOGIC ---
+    normalized_headlines = []
+    source_counts = {}
+    max_per_feed = 5 # Set the maximum number of articles per feed
+
+    for article in all_headlines:
+        source = article.get('outlet')
+        if source:
+            if source not in source_counts:
+                source_counts[source] = 0
+            
+            if source_counts[source] < max_per_feed:
+                normalized_headlines.append(article)
+                source_counts[source] += 1
     
     return normalized_headlines
-    # --- END ADDITION ---
+    # --- END UPDATED LOGIC ---
 
 # Create a Flask web application instance
 app = Flask(__name__)
