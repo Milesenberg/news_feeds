@@ -27,7 +27,7 @@ rss_feeds = [
     "https://www.declassifieduk.org/feed/",
     "https://www.bristol247.com/feed/",
     "https://www.middleeasteye.net/rss",
-    "https://www.counterfire.org/feed/"
+    "https://electronicintifada.net/rss"  # New RSS Feed for Electronic Intifada
 ]
 
 def get_headlines():
@@ -60,13 +60,6 @@ def get_headlines():
                 MAX_SUMMARY_LENGTH = 250
                 if len(clean_summary) > MAX_SUMMARY_LENGTH:
                     clean_summary = clean_summary[:MAX_SUMMARY_LENGTH] + "..."
-
-                image_url = None
-                if 'media_content' in entry and len(entry.media_content) > 0:
-                    image_url = entry.media_content[0].get('url')
-                elif 'enclosures' in entry and len(entry.enclosures) > 0:
-                    if entry.enclosures[0].get('type', '').startswith('image/'):
-                        image_url = entry.enclosures[0].get('href')
                 
                 # Check if 'published_parsed' exists before appending to avoid errors
                 if hasattr(entry, 'published_parsed'):
@@ -78,7 +71,6 @@ def get_headlines():
                         'link': entry.link,
                         'published': entry.published_parsed,  # Used for sorting
                         'published_formatted': published_date, # Used for display
-                        'image_url': image_url
                     })
         except Exception:
             pass
