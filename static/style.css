@@ -77,3 +77,12 @@ h1 {
     color: #999; /* A slightly darker grey for the date */
     margin-top: 5px;
 }
+
+/* NEW: Styles for the headline images */
+.headline-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}

@@ -29,6 +29,15 @@
                         outletSpan.classList.add('outlet', headline.color);
                         outletSpan.textContent = headline.outlet;
 
+                        // NEW: Create an image element if an image URL is present
+                        if (headline.image) {
+                            const imageElement = document.createElement('img');
+                            imageElement.src = headline.image;
+                            imageElement.alt = headline.title;
+                            imageElement.classList.add('headline-image');
+                            headlineDiv.appendChild(imageElement);
+                        }
+
                         const titleLink = document.createElement('a');
                         titleLink.href = headline.link;
                         titleLink.textContent = headline.title;
