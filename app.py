@@ -46,7 +46,7 @@ source_colors = {
     "The Keyword": "color-2", # Reusing colors
     "Wired": "color-3", # Reusing colors
     "The Register": "color-4", # Reusing colors
-    "Marvel Snap Zone": "color-5", # Reusing colors
+    "Marvel Snap Zone": "color-8", # Reusing colors
     "Palestine Chronicle": "color-6", # Reusing colors
     "Declassified UK": "color-7", # Reusing colors
     "Bristol247": "color-8", # Reusing colors
