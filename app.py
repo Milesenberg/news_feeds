@@ -24,90 +24,86 @@ rss_feeds = [
     "https://marvelsnapzone.com/feed/",
     "https://www.palestinechronicle.com/feed/",
     "https://www.declassifieduk.org/feed/",
-    "https://www.reddit.com/r/civitai/.rss" # NEW: Reddit RSS Feed
+    "https://www.bristol247.com/feed/",
+    "https://www.middleeasteye.net/rss",
+    "https://electronicintifada.net/rss"  # New RSS Feed for Electronic Intifada
 ]
 
-# A dictionary to hold a name and color for each feed URL
-feed_info = {
-    "https://www.mintpressnews.com/feed/": {"name": "MintPress News", "color": "red"},
-    "https://www.aljazeera.com/where/palestine/rss.xml": {"name": "Al Jazeera", "color": "orange"},
-    "https://blog.playstation.com/feed": {"name": "PlayStation Blog", "color": "blue"},
-    "https://aiartblog.com/feed": {"name": "AI Art Blog", "color": "purple"},
-    "http://bristolpost.co.uk/whats-on/?service=rss": {"name": "Bristol Post", "color": "blue"},
-    "https://www.somersetlive.co.uk/?service=rss": {"name": "Somerset Live", "color": "green"},
-    "https://netpol.org/feed/": {"name": "Netpol", "color": "yellow"},
-    "https://www.fujairahobserver.com/category/news/local-news/": {"name": "Fujairah Observer", "color": "cyan"},
-    "https://www.catalannews.com/rss/news/all": {"name": "Catalan News", "color": "magenta"},
-    "https://www.hsj.co.uk/latest-news/20683.more": {"name": "HSJ", "color": "pink"},
-    "https://www.england.nhs.uk/news/feed/": {"name": "NHS England", "color": "teal"},
-    "https://blog.google/technology/ai/feed/": {"name": "Google AI Blog", "color": "brown"},
-    "https://www.wired.com/feed/tag/ai/latest/rss": {"name": "Wired AI", "color": "coral"},
-    "https://www.theregister.com/headlines.atom": {"name": "The Register", "color": "navy"},
-    "https://marvelsnapzone.com/feed/": {"name": "Marvel Snap Zone", "color": "olive"},
-    "https://www.palestinechronicle.com/feed/": {"name": "Palestine Chronicle", "color": "lime"},
-    "https://www.declassifieduk.org/feed/": {"name": "Declassified UK", "color": "indigo"},
-    "https://www.reddit.com/r/civitai/.rss": {"name": "r/civitai", "color": "red"} # NEW: Feed info for Reddit
+# A dictionary mapping outlet names to color classes.
+# You can customize these colors.
+source_colors = {
+    "MintPress News": "color-1",
+    "Al Jazeera English": "color-2",
+    "PlayStation.Blog": "color-3",
+    "AI Art Blog": "color-4",
+    "Bristol Post": "color-5",
+    "SomersetLive": "color-6",
+    "Netpol": "color-7",
+    "Fujairah Observer": "color-8",
+    "Catalan News": "color-9",
+    "Health Service Journal": "color-10",
+    "NHS England": "color-1", # Reusing colors
+    "The Keyword": "color-2", # Reusing colors
+    "Wired": "color-3", # Reusing colors
+    "The Register": "color-4", # Reusing colors
+    "Marvel Snap Zone": "color-5", # Reusing colors
+    "Palestine Chronicle": "color-6", # Reusing colors
+    "Declassified UK": "color-7", # Reusing colors
+    "Bristol247": "color-8", # Reusing colors
+    "Middle East Eye": "color-9", # Reusing colors
+    "The Electronic Intifada": "color-10", # Reusing colors
 }
 
+
 def get_headlines():
-    # ... (existing code)
-    # The image-finding logic needs to be added here.
-    # The provided code snippet already contains the structure for parsing, so the image logic goes inside the loop.
+    """
+    Fetches headlines, summaries, links, outlet, and color from the list of RSS feeds.
     
-    # --- UPDATED get_headlines() FUNCTION ---
-    headlines = []
+    This function now normalizes the feeds to ensure a balanced display of articles.
+    """
     articles_by_source = {}
-    
+
     for url in rss_feeds:
         try:
             feed = feedparser.parse(url)
-            outlet_name = feed_info.get(url, {}).get("name", "Unknown")
-            color_class = feed_info.get(url, {}).get("color", "default")
-            
-            for entry in feed.entries:
-                # Get the link and title
-                link = entry.link
-                title = html.unescape(entry.title)
-                
-                # Extract the summary, handling different attributes
-                summary_raw = ""
-                if 'summary' in entry:
-                    summary_raw = entry.summary
-                elif 'description' in entry:
-                    summary_raw = entry.description
-                
-                # Clean up summary by removing HTML tags
-                summary = re.sub('<[^<]+?>', '', summary_raw)
-                
-                # Extract image URL
-                image_url = ""
-                # Check for media:content first (common for Reddit)
-                if 'media_content' in entry and len(entry.media_content) > 0:
-                    image_url = entry.media_content[0]['url']
-                # If not found, try to extract from summary or content
-                elif 'content' in entry and len(entry.content) > 0:
-                    image_match = re.search(r'<img.*?src="(.*?)".*?>', entry.content[0]['value'])
-                    if image_match:
-                        image_url = image_match.group(1)
-                
-                # Get the published date
-                published_date = ""
-                if hasattr(entry, 'published_parsed'):
-                    published_date = time.strftime('%Y-%m-%d %H:%M:%S', entry.published_parsed)
+            if not feed.entries:
+                continue
 
-                article = {
-                    'title': title,
-                    'link': link,
-                    'summary': summary,
-                    'outlet': outlet_name,
-                    'image': image_url, # NEW: Add the image URL
-                    'published': entry.published_parsed, # Used for sorting
-                    'published_formatted': published_date, # Used for display
-                    'color': color_class,  # Add the color class
-                }
-                if outlet_name not in articles_by_source:
-                    articles_by_source[outlet_name] = []
-                articles_by_source[outlet_name].append(article)
+            outlet_name = feed.feed.get('title', 'Unknown Outlet')
+            if not outlet_name:
+                outlet_name = urlparse(url).netloc.replace('www.', '')
+
+            # Specific fix for Middle East Eye's feed name
+            if url == "https://www.middleeasteye.net/rss":
+                outlet_name = "Middle East Eye"
+
+            # Get the color class from the dictionary, defaulting to 'default-color'
+            color_class = source_colors.get(outlet_name, "default-color")
+
+            for entry in feed.entries:
+                clean_summary = html.unescape(entry.get('summary', 'No summary available.'))
+                clean_summary = re.sub('<.*?>', '', clean_summary)
+
+                # Trim summary if it's too long
+                MAX_SUMMARY_LENGTH = 250
+                if len(clean_summary) > MAX_SUMMARY_LENGTH:
+                    clean_summary = clean_summary[:MAX_SUMMARY_LENGTH] + "..."
+                
+                # Check if 'published_parsed' exists before appending to avoid errors
+                if hasattr(entry, 'published_parsed'):
+                    published_date = time.strftime('%B %d, %Y - %I:%M %p', entry.published_parsed)
+                    article = {
+                        'outlet': outlet_name,
+                        'title': entry.title,
+                        'summary': clean_summary,
+                        'link': entry.link,
+                        'published': entry.published_parsed,  # Used for sorting
+                        'published_formatted': published_date, # Used for display
+                        'color': color_class,  # Add the color class
+                    }
+                    if outlet_name not in articles_by_source:
+                        articles_by_source[outlet_name] = []
+                    articles_by_source[outlet_name].append(article)
         except Exception:
             pass
             
