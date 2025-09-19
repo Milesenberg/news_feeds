@@ -14,9 +14,9 @@ rss_feeds = [
     "http://bristolpost.co.uk/whats-on/?service=rss",
     "https://www.somersetlive.co.uk/?service=rss",
     "https://netpol.org/feed/",
-    "https://www.fujairahobserver.com/category/news/local-news/",
+    "https://www.fujairahobserver.com/feed",
     "https://www.catalannews.com/rss/news/all",
-    "https://www.hsj.co.uk/latest-news/20683.more",
+    "https://www.hsj.co.uk/rss/latest-news/more",
     "https://www.england.nhs.uk/news/feed/",
     "https://blog.google/technology/ai/feed/",
     "https://www.wired.com/feed/tag/ai/latest/rss",
@@ -26,7 +26,29 @@ rss_feeds = [
     "https://www.declassifieduk.org/feed/",
     "https://www.bristol247.com/feed/",
     "https://www.middleeasteye.net/rss",
-    "https://electronicintifada.net/rss"  # New RSS Feed for Electronic Intifada
+    "https://electronicintifada.net/rss",
+    "https://www.thenation.com/feed/",
+    "https://www.wsws.org/en/rss.xml",
+    "https://socialistworker.org/rss/news.xml",
+    "https://communistparty.org.uk/feed/podcast",
+    "https://cosmonaut.blog/feed/",
+    "https://palestinedeepdive.podbean.com/feed/",
+    "https://feeds.simplecast.com/6_2n5uEa",
+    "https://feeds.acast.com/public/shows/politicsjoe",
+    "https://qudsn.co/feed/",
+    "https://www.fullstackpython.com/feeds/AllFeeds.rss",
+    "https://dnd.wizards.com/articles/rss.xml",
+    "https://www.gamespot.com/feeds/news/tags/rockstar-games",
+    "https://www.outside-xbox.com/feed/",
+    "https://feeds.acast.com/public/shows/corridordigital",
+    "https://www.wired.com/feed/rss",
+    "https://www.youtube.com/feeds/videos.xml?channel_id=UCWJ2lWNubArHWmf3FIHnIFQ",
+    "https://feeds.simplecast.com/2Yc6kM_P",
+    "https://www.diffordsguide.com/rss/cocktails",
+    "https://www.universetoday.com/feed/",
+    "https://www.carbonbrief.org/feed/",
+    "https://mindbodygreen.com/rss",
+    "https://www.patheos.com/blogs/secularoutpost/feed/",
 ]
 
 # A dictionary mapping outlet names to color classes.
@@ -42,16 +64,37 @@ source_colors = {
     "Fujairah Observer": "color-8",
     "Catalan News": "color-9",
     "Health Service Journal": "color-10",
-    "NHS England": "color-1", # Reusing colors
-    "The Keyword": "color-2", # Reusing colors
-    "Wired": "color-3", # Reusing colors
-    "The Register": "color-4", # Reusing colors
-    "Marvel Snap Zone": "color-5", # Reusing colors
-    "Palestine Chronicle": "color-6", # Reusing colors
-    "Declassified UK": "color-7", # Reusing colors
-    "Bristol247": "color-8", # Reusing colors
-    "Middle East Eye": "color-9", # Reusing colors
-    "The Electronic Intifada": "color-10", # Reusing colors
+    "NHS England": "color-1",
+    "The Keyword": "color-2",
+    "Wired": "color-3",
+    "The Register": "color-4",
+    "Marvel Snap Zone": "color-5",
+    "Palestine Chronicle": "color-6",
+    "Declassified UK": "color-7",
+    "Bristol247": "color-8",
+    "Middle East Eye": "color-9",
+    "Electronic Intifada": "color-10",
+    "The Nation": "color-1",
+    "World Socialist Web Site": "color-2",
+    "SocialistWorker.org": "color-3",
+    "The Communist": "color-4",
+    "Cosmonaut Magazine": "color-5",
+    "Palestine Deep Dive": "color-6",
+    "TRT World": "color-7",
+    "PoliticsJOE": "color-8",
+    "Quds News Network": "color-9",
+    "Full Stack Python": "color-10",
+    "D&D Official": "color-1",
+    "Gamespot": "color-2",
+    "Outside Xbox": "color-3",
+    "Corridor Crew": "color-4",
+    "Linus Tech Tips": "color-5",
+    "ASMR": "color-6",
+    "Difford's Guide": "color-7",
+    "Universe Today": "color-8",
+    "Carbon Brief": "color-9",
+    "MindBodyGreen": "color-10",
+    "Secular Outpost": "color-1",
 }
 
 
@@ -73,9 +116,40 @@ def get_headlines():
             if not outlet_name:
                 outlet_name = urlparse(url).netloc.replace('www.', '')
 
-            # Specific fix for Middle East Eye's feed name
             if url == "https://www.middleeasteye.net/rss":
                 outlet_name = "Middle East Eye"
+            
+            # Use a dictionary to map feed URLs to consistent source names
+            source_map = {
+                "https://www.fujairahobserver.com/feed": "Fujairah Observer",
+                "https://www.hsj.co.uk/rss/latest-news/more": "Health Service Journal",
+                "https://electronicintifada.net/rss": "Electronic Intifada",
+                "https://www.thenation.com/feed/": "The Nation",
+                "https://www.wsws.org/en/rss.xml": "World Socialist Web Site",
+                "https://socialistworker.org/rss/news.xml": "SocialistWorker.org",
+                "https://communistparty.org.uk/feed/podcast": "The Communist",
+                "https://cosmonaut.blog/feed/": "Cosmonaut Magazine",
+                "https://palestinedeepdive.podbean.com/feed/": "Palestine Deep Dive",
+                "https://feeds.simplecast.com/6_2n5uEa": "TRT World",
+                "https://feeds.acast.com/public/shows/politicsjoe": "PoliticsJOE",
+                "https://qudsn.co/feed/": "Quds News Network",
+                "https://www.fullstackpython.com/feeds/AllFeeds.rss": "Full Stack Python",
+                "https://dnd.wizards.com/articles/rss.xml": "D&D Official",
+                "https://www.gamespot.com/feeds/news/tags/rockstar-games": "Gamespot",
+                "https://www.outside-xbox.com/feed/": "Outside Xbox",
+                "https://feeds.acast.com/public/shows/corridordigital": "Corridor Crew",
+                "https://www.wired.com/feed/rss": "Wired",
+                "https://www.youtube.com/feeds/videos.xml?channel_id=UCWJ2lWNubArHWmf3FIHnIFQ": "Linus Tech Tips",
+                "https://feeds.simplecast.com/2Yc6kM_P": "ASMR",
+                "https://www.diffordsguide.com/rss/cocktails": "Difford's Guide",
+                "https://www.universetoday.com/feed/": "Universe Today",
+                "https://www.carbonbrief.org/feed/": "Carbon Brief",
+                "https://mindbodygreen.com/rss": "MindBodyGreen",
+                "https://www.patheos.com/blogs/secularoutpost/feed/": "Secular Outpost",
+            }
+            # Look up the outlet name using the URL map, falling back to the feed's title
+            outlet_name = source_map.get(url, outlet_name)
+
 
             # Get the color class from the dictionary, defaulting to 'default-color'
             color_class = source_colors.get(outlet_name, "default-color")
