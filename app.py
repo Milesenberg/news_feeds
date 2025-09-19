@@ -14,9 +14,9 @@ rss_feeds = [
     "http://bristolpost.co.uk/whats-on/?service=rss",
     "https://www.somersetlive.co.uk/?service=rss",
     "https://netpol.org/feed/",
-    "https://www.fujairahobserver.com/feed", # Corrected RSS feed URL
+    "https://www.fujairahobserver.com/category/news/local-news/",
     "https://www.catalannews.com/rss/news/all",
-    "https://www.hsj.co.uk/rss/latest-news/more", # Corrected RSS feed URL
+    "https://www.hsj.co.uk/latest-news/20683.more",
     "https://www.england.nhs.uk/news/feed/",
     "https://blog.google/technology/ai/feed/",
     "https://www.wired.com/feed/tag/ai/latest/rss",
@@ -26,7 +26,7 @@ rss_feeds = [
     "https://www.declassifieduk.org/feed/",
     "https://www.bristol247.com/feed/",
     "https://www.middleeasteye.net/rss",
-    "https://electronicintifada.net/rss"
+    "https://electronicintifada.net/rss"  # New RSS Feed for Electronic Intifada
 ]
 
 # A dictionary mapping outlet names to color classes.
@@ -46,12 +46,12 @@ source_colors = {
     "The Keyword": "color-2", # Reusing colors
     "Wired": "color-3", # Reusing colors
     "The Register": "color-4", # Reusing colors
-    "Marvel Snap Zone": "color-8", # Reusing colors
+    "Marvel Snap Zone": "color-5", # Reusing colors
     "Palestine Chronicle": "color-6", # Reusing colors
     "Declassified UK": "color-7", # Reusing colors
     "Bristol247": "color-8", # Reusing colors
     "Middle East Eye": "color-9", # Reusing colors
-    "Electronic Intifada": "color-10", # Corrected feed name
+    "The Electronic Intifada": "color-10", # Reusing colors
 }
 
 
