@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Milesenberg Headlines</title>
+    <title>Milesenberg's Headlines</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
     <div class="container">
-        <h1>Milesenberg Headlines</h1>
+        <h1>Milesenberg's Headlines</h1>
         <div id="headlines-container">
-            </div>
+        </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             fetch('/headlines')
                 .then(response => response.json())
                 .then(headlines => {
@@ -34,7 +36,7 @@
                         titleLink.textContent = headline.title;
                         titleLink.target = "_blank";
                         titleLink.rel = "noopener noreferrer";
-                        
+
                         const titleHeading = document.createElement('h2');
                         titleHeading.appendChild(outletSpan);
                         titleHeading.appendChild(titleLink);
@@ -57,4 +59,5 @@
         });
     </script>
 </body>
+
 </html>
