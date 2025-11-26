@@ -1,63 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
+fetch('/headlines')
+.then(response => response.json())
+.then(headlines => {
+const container = document.getElementById('headlines-container');
+container.innerHTML = ''; // Clear any loading message
+headlines.forEach(headline => {
+const headlineDiv = document.createElement('div');
+headlineDiv.classList.add('headline');
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Milesenberg's Headlines</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
+// Use the color data to set the class for the outlet name
+const outletSpan = document.createElement('span');
+outletSpan.classList.add('outlet', headline.color);
+outletSpan.textContent = headline.outlet;
 
-<body>
-    <div class="container">
-        <h1>Milesenberg's Headlines</h1>
-        <div id="headlines-container">
-        </div>
-    </div>
+const titleLink = document.createElement('a');
+titleLink.href = headline.link;
+titleLink.textContent = headline.title;
+titleLink.target = "_blank";
+titleLink.rel = "noopener noreferrer";
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            fetch('/headlines')
-                .then(response => response.json())
-                .then(headlines => {
-                    const container = document.getElementById('headlines-container');
-                    container.innerHTML = ''; // Clear any loading message
-                    headlines.forEach(headline => {
-                        const headlineDiv = document.createElement('div');
-                        headlineDiv.classList.add('headline');
+const titleHeading = document.createElement('h2');
+titleHeading.appendChild(outletSpan);
+titleHeading.appendChild(titleLink);
 
-                        // Use the color data to set the class for the outlet name
-                        const outletSpan = document.createElement('span');
-                        outletSpan.classList.add('outlet', headline.color);
-                        outletSpan.textContent = headline.outlet;
+const summaryPara = document.createElement('p');
+summaryPara.textContent = headline.summary;
 
-                        const titleLink = document.createElement('a');
-                        titleLink.href = headline.link;
-                        titleLink.textContent = headline.title;
-                        titleLink.target = "_blank";
-                        titleLink.rel = "noopener noreferrer";
+const publishedPara = document.createElement('p');
+publishedPara.classList.add('published-date');
+publishedPara.textContent = headline.published_formatted;
 
-                        const titleHeading = document.createElement('h2');
-                        titleHeading.appendChild(outletSpan);
-                        titleHeading.appendChild(titleLink);
+headlineDiv.appendChild(titleHeading);
+headlineDiv.appendChild(summaryPara);
+headlineDiv.appendChild(publishedPara);
 
-                        const summaryPara = document.createElement('p');
-                        summaryPara.textContent = headline.summary;
-
-                        const publishedPara = document.createElement('p');
-                        publishedPara.classList.add('published-date');
-                        publishedPara.textContent = headline.published_formatted;
-
-                        headlineDiv.appendChild(titleHeading);
-                        headlineDiv.appendChild(summaryPara);
-                        headlineDiv.appendChild(publishedPara);
-
-                        container.appendChild(headlineDiv);
-                    });
-                })
-                .catch(error => console.error('Error fetching headlines:', error));
-        });
-    </script>
+container.appendChild(headlineDiv);
+});
+})
+.catch(error => console.error('Error fetching headlines:', error));
+});
+</script>
 </body>
 
 </html>
