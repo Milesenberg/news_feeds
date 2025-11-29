@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milesenberg News</title>
+    <style>
+        body {
+            background-color: black;
+            color: #c0c0c0;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .headline {
+            border-bottom: 1px solid #444;
+            padding: 15px 0;
+        }
+        .headline:last-child {
+            border-bottom: none;
+        }
+        .headline-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
+        }
+        .headline-summary {
+            font-size: 0.9em;
+            color: #c0c0c0;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+        .headline-link {
+            font-size: 0.9em;
+            color: #6699ff;
+            text-decoration: underline;
+        }
+        .headline-link:hover {
+            color: #99bbff;
+        }
+        .headline-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        .headline-info {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Milesenberg Headlines</h1>
+        <div id="news-container">
+            <p>Loading headlines...</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const newsContainer = document.getElementById('news-container');
+
+            fetch('/headlines')
+                .then(response => response.json())
+                .then(data => {
+                    newsContainer.innerHTML = ''; // Clear the "Loading..." message
+                    data.forEach(item => {
+                        const headlineDiv = document.createElement('div');
+                        headlineDiv.className = 'headline';
+
+                        // Create and append the title
+                        const title = document.createElement('div');
+                        title.className = 'headline-title';
+                        title.textContent = '• ' + item.title;
+                        headlineDiv.appendChild(title);
+
+                        // Create and append the date and outlet info
+                        const info = document.createElement('div');
+                        info.className = 'headline-info';
+                        info.textContent = `${item.outlet} - ${item.published_formatted}`;
+                        headlineDiv.appendChild(info);
+
+                        // Create and append the image if it exists
+                        if (item.image_url) {
+                            const image = document.createElement('img');
+                            image.className = 'headline-image';
+                            image.src = item.image_url;
+                            headlineDiv.appendChild(image);
+                        }
+
+                        // Create and append the summary
+                        const summary = document.createElement('p');
+                        summary.className = 'headline-summary';
+                        summary.textContent = item.summary;
+                        headlineDiv.appendChild(summary);
+
+                        // Create and append the link
+                        const link = document.createElement('a');
+                        link.className = 'headline-link';
+                        link.href = item.link;
+                        link.textContent = 'Read more here...';
+                        link.target = '_blank';
+                        headlineDiv.appendChild(link);
+                        
+                        newsContainer.appendChild(headlineDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    newsContainer.innerHTML = '<p>Failed to load headlines. Please try again later.</p>';
+                });
+        });
+    </script>
+</body>
+</html>
