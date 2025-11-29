@@ -1,5 +1,5 @@
 // --- Audio Engine Constants ---
-const TOTAL_STEPS = 16;
+const TOTAL_STEPS = 32;
 const DEFAULT_BPM = 125;
 const SCHEDULE_AHEAD_TIME = 0.1; // s
 
@@ -18,15 +18,25 @@ let hasSample = false;
 let sampleSource = null; // 'mic' or 'file'
 let samplePitch = 1.0;
 
-// Grid State
+// Export State
+let isExporting = false;
+
+// Grid State (32 Steps)
 let grid = [
-    [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0], // Kick
-    [0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0], // Snare
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], // CH
-    [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0], // OH
-    [1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0], // Acid Bass
-    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], // Stab
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0], // Sampler
+    // Kick
+    [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0],
+    // Snare
+    [0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+    // CH
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    // OH
+    [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+    // Acid Bass
+    [1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0],
+    // Rave Stab
+    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+    // Sampler
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ];
 
 // --- Audio Context & Nodes ---
@@ -34,12 +44,17 @@ let audioCtx = null;
 let masterGainNode = null;
 let masterFilterNode = null;
 let distortionNode = null;
+let masterCompressorNode = null;
 let nextNoteTime = 0.0;
 let timerID = null;
 
 // Sampler Buffers
 let sampleBuffer = null;
 let mediaRecorder = null;
+
+// Export Refs
+let exportRecorder = null;
+let exportStreamDest = null;
 
 // --- Helper Functions ---
 const createDistortionCurve = (amount) => {
@@ -74,18 +89,18 @@ const initAudio = async () => {
     distortionNode.curve = createDistortionCurve(distortionAmt);
     distortionNode.oversample = '4x';
 
-    const compressor = audioCtx.createDynamicsCompressor();
-    compressor.threshold.value = -24;
-    compressor.knee.value = 30;
-    compressor.ratio.value = 12;
-    compressor.attack.value = 0.003;
-    compressor.release.value = 0.25;
+    masterCompressorNode = audioCtx.createDynamicsCompressor();
+    masterCompressorNode.threshold.value = -24;
+    masterCompressorNode.knee.value = 30;
+    masterCompressorNode.ratio.value = 12;
+    masterCompressorNode.attack.value = 0.003;
+    masterCompressorNode.release.value = 0.25;
 
     // Connect Chain: MasterGain -> Distortion -> Filter -> Compressor -> Destination
     masterGainNode.connect(distortionNode);
     distortionNode.connect(masterFilterNode);
-    masterFilterNode.connect(compressor);
-    compressor.connect(audioCtx.destination);
+    masterFilterNode.connect(masterCompressorNode);
+    masterCompressorNode.connect(audioCtx.destination);
 
     if (audioCtx.state === 'suspended') {
         await audioCtx.resume();
@@ -270,7 +285,7 @@ const updateUIState = () => {
 
     // Update Grid Initial State
     for (let r = 0; r < 7; r++) {
-        for (let c = 0; c < 16; c++) {
+        for (let c = 0; c < TOTAL_STEPS; c++) {
             updateCellUI(r, c);
         }
     }
@@ -280,18 +295,25 @@ const updateStepUI = (step) => {
     // Reset all indicators
     for (let i = 0; i < TOTAL_STEPS; i++) {
         const indicator = document.getElementById(`step-indicator-${i}`);
+        if (!indicator) continue; // Safety check
+
         if (i === step) {
-            indicator.classList.remove('bg-gray-600', 'bg-gray-800');
+            indicator.classList.remove('bg-gray-500', 'bg-gray-600', 'bg-gray-800');
             indicator.classList.add('bg-white', 'shadow-[0_0_10px_white]');
         } else {
             indicator.classList.remove('bg-white', 'shadow-[0_0_10px_white]');
-            indicator.classList.add(i % 4 === 0 ? 'bg-gray-600' : 'bg-gray-800');
+            // Restore original color based on position
+            if (i % 8 === 0) indicator.classList.add('bg-gray-500');
+            else if (i % 4 === 0) indicator.classList.add('bg-gray-600');
+            else indicator.classList.add('bg-gray-800');
         }
     }
 };
 
 const updateCellUI = (row, col) => {
     const cell = document.getElementById(`cell-${row}-${col}`);
+    if (!cell) return;
+
     const isActive = grid[row][col] === 1;
 
     if (isActive) {
@@ -322,6 +344,36 @@ const updatePlayButton = () => {
         icon.setAttribute('data-lucide', 'play');
     }
     lucide.createIcons();
+};
+
+const updateExportButton = () => {
+    const btn = document.getElementById('export-btn');
+    const label = document.getElementById('export-label');
+    const icon = document.getElementById('export-icon');
+
+    if (isExporting) {
+        btn.classList.remove('bg-gray-700', 'hover:bg-gray-600', 'text-gray-300');
+        btn.classList.add('bg-red-600', 'text-white', 'animate-pulse');
+        btn.textContent = 'STOP & SAVE';
+
+        label.classList.remove('text-gray-400');
+        label.classList.add('text-red-500');
+        label.textContent = 'RECORDING...';
+
+        icon.classList.remove('text-gray-400');
+        icon.classList.add('text-red-500', 'animate-pulse');
+    } else {
+        btn.classList.remove('bg-red-600', 'text-white', 'animate-pulse');
+        btn.classList.add('bg-gray-700', 'hover:bg-gray-600', 'text-gray-300');
+        btn.textContent = 'REC OUTPUT';
+
+        label.classList.remove('text-red-500');
+        label.classList.add('text-gray-400');
+        label.textContent = 'EXPORT AUDIO';
+
+        icon.classList.remove('text-red-500', 'animate-pulse');
+        icon.classList.add('text-gray-400');
+    }
 };
 
 const updateSamplerStatus = () => {
@@ -375,10 +427,56 @@ const togglePlay = () => {
 const clearGrid = () => {
     grid = grid.map(row => row.map(() => 0));
     for (let r = 0; r < 7; r++) {
-        for (let c = 0; c < 16; c++) {
+        for (let c = 0; c < TOTAL_STEPS; c++) {
             updateCellUI(r, c);
         }
     }
+};
+
+const toggleExport = async () => {
+    if (isExporting) {
+        // STOP EXPORT
+        if (exportRecorder && exportRecorder.state !== 'inactive') {
+            exportRecorder.stop();
+        }
+        isExporting = false;
+        // Optional: Stop playback too
+        if (isPlaying) togglePlay();
+    } else {
+        // START EXPORT
+        if (!audioCtx) await initAudio();
+
+        const chunks = [];
+
+        // Create destination if not exists
+        if (!exportStreamDest) {
+            exportStreamDest = audioCtx.createMediaStreamDestination();
+            // Connect Master Chain to Recorder Destination
+            masterCompressorNode.connect(exportStreamDest);
+        }
+
+        exportRecorder = new MediaRecorder(exportStreamDest.stream);
+
+        exportRecorder.ondataavailable = (e) => chunks.push(e.data);
+        exportRecorder.onstop = () => {
+            const blob = new Blob(chunks, { type: 'audio/webm' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `big_beat_recording_${Date.now()}.webm`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        };
+
+        exportRecorder.start();
+        isExporting = true;
+
+        // Start playback if not already playing
+        if (!isPlaying) togglePlay();
+    }
+    updateExportButton();
 };
 
 const toggleRecording = async () => {
@@ -440,6 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('init-btn').addEventListener('click', initAudio);
     document.getElementById('play-btn').addEventListener('click', togglePlay);
     document.getElementById('clear-btn').addEventListener('click', clearGrid);
+    document.getElementById('export-btn').addEventListener('click', toggleExport);
 
     document.getElementById('bpm-input').addEventListener('change', (e) => {
         bpm = Number(e.target.value);

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Big Beat Sequencer</title>
+    <title>Big Beat Sequencer v2.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -67,6 +67,18 @@
                     </div>
                     <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.8"
                         class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500">
+                </div>
+
+                <!-- Export Button -->
+                <div class="flex flex-col items-center border-l border-gray-700 pl-6">
+                    <div class="flex items-center gap-1 mb-1">
+                        <i id="export-icon" data-lucide="download" class="w-3 h-3 text-gray-400"></i>
+                        <span id="export-label" class="text-xs font-bold text-gray-400">EXPORT AUDIO</span>
+                    </div>
+                    <button id="export-btn"
+                        class="w-full py-1 px-3 rounded text-xs font-bold transition-colors bg-gray-700 hover:bg-gray-600 text-gray-300">
+                        REC OUTPUT
+                    </button>
                 </div>
             </div>
         </div>
@@ -131,13 +143,13 @@
 
         <!-- Sequencer Grid -->
         <div class="p-6 overflow-x-auto">
-            <div class="min-w-[800px]">
+            <div class="min-w-[1200px]">
                 <!-- Step Indicators -->
                 <div class="flex mb-2">
                     <div class="w-32"></div>
-                    {% for i in range(16) %}
+                    {% for i in range(32) %}
                     <div id="step-indicator-{{ i }}"
-                        class="flex-1 h-2 mx-0.5 rounded-full transition-all duration-75 {{ 'bg-gray-600' if i % 4 == 0 else 'bg-gray-800' }}">
+                        class="flex-1 h-2 mx-0.5 rounded-full transition-all duration-75 {{ 'bg-gray-500' if i % 8 == 0 else ('bg-gray-600' if i % 4 == 0 else 'bg-gray-800') }}">
                     </div>
                     {% endfor %}
                 </div>
@@ -164,10 +176,10 @@
 
                     <!-- Steps -->
                     <div class="flex-1 flex">
-                        {% for col_idx in range(16) %}
+                        {% for col_idx in range(32) %}
                         <button id="cell-{{ row_idx }}-{{ col_idx }}"
                             onclick="toggleGridStep({{ row_idx }}, {{ col_idx }})"
-                            class="flex-1 aspect-square mx-0.5 rounded-sm transition-all duration-100 border border-gray-700 bg-gray-800 hover:bg-gray-700 {{ 'border-l-gray-600' if col_idx % 4 == 0 else '' }} {{ instruments[row_idx].class }}"></button>
+                            class="flex-1 aspect-square mx-0.5 rounded-sm transition-all duration-100 border border-gray-700 bg-gray-800 hover:bg-gray-700 {{ 'border-l-2 border-l-white' if col_idx % 16 == 0 else ('border-l-gray-600' if col_idx % 4 == 0 else '') }} {{ instruments[row_idx].class }}"></button>
                         {% endfor %}
                     </div>
                 </div>
@@ -176,8 +188,8 @@
         </div>
 
         <div class="bg-gray-900 px-6 py-3 text-xs text-gray-500 flex justify-between border-t border-gray-800">
-            <span>MILES'S BIG BEAT MACHINE v1.2</span>
-            <span>STEREO OUTPUT • 44.1KHZ</span>
+            <span>MILES'S BIG BEAT MACHINE v2.0 (EXPANDED)</span>
+            <span>STEREO OUTPUT • 44.1KHZ • 32 STEPS</span>
         </div>
     </div>
 
