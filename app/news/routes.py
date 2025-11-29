@@ -1,9 +1,12 @@
 import feedparser
-from flask import Blueprint, jsonify, render_template, url_for
+from flask import Blueprint, jsonify, render_template
 import html
 import re
 import time
 from urllib.parse import urlparse
+import json
+import os
+import threading
 
 news = Blueprint('news', __name__, template_folder='templates', static_folder='static')
 
@@ -54,7 +57,6 @@ rss_feeds = [
 ]
 
 # A dictionary mapping outlet names to color classes.
-# You can customize these colors.
 source_colors = {
     "MintPress News": "color-1",
     "Al Jazeera English": "color-2",
@@ -99,12 +101,50 @@ source_colors = {
     "Secular Outpost": "color-1",
 }
 
+# Global cache
+LATEST_HEADLINES = []
+CACHE_FILE = os.path.join(os.path.dirname(__file__), 'news_cache.json')
+UPDATE_INTERVAL = 900  # 15 minutes in seconds
 
-def get_headlines():
+
+def load_cache():
+    """Load headlines from disk cache."""
+    global LATEST_HEADLINES
+    try:
+        if os.path.exists(CACHE_FILE):
+            with open(CACHE_FILE, 'r', encoding='utf-8') as f:
+                LATEST_HEADLINES = json.load(f)
+            print(f"[NEWS] Loaded {len(LATEST_HEADLINES)} headlines from cache")
+        else:
+            print("[NEWS] No cache file found, will fetch fresh data")
+    except Exception as e:
+        print(f"[NEWS] Error loading cache: {e}")
+        LATEST_HEADLINES = []
+
+
+def save_cache(headlines):
+    """Save headlines to disk cache."""
+    try:
+        # Convert time.struct_time to string for JSON serialization
+        serializable_headlines = []
+        for article in headlines:
+            article_copy = article.copy()
+            if 'published' in article_copy:
+                # Convert struct_time to timestamp
+                article_copy['published'] = time.mktime(article_copy['published'])
+            serializable_headlines.append(article_copy)
+        
+        with open(CACHE_FILE, 'w', encoding='utf-8') as f:
+            json.dump(serializable_headlines, f, ensure_ascii=False, indent=2)
+        print(f"[NEWS] Saved {len(headlines)} headlines to cache")
+    except Exception as e:
+        print(f"[NEWS] Error saving cache: {e}")
+
+
+def fetch_headlines():
     """
     Fetches headlines, summaries, links, outlet, and color from the list of RSS feeds.
-    
-    This function now normalizes the feeds to ensure a balanced display of articles.
+    This function normalizes the feeds to ensure a balanced display of articles.
     """
     articles_by_source = {}
 
@@ -149,23 +189,18 @@ def get_headlines():
                 "https://mindbodygreen.com/rss": "MindBodyGreen",
                 "https://www.patheos.com/blogs/secularoutpost/feed/": "Secular Outpost",
             }
-            # Look up the outlet name using the URL map, falling back to the feed's title
             outlet_name = source_map.get(url, outlet_name)
 
-
-            # Get the color class from the dictionary, defaulting to 'default-color'
             color_class = source_colors.get(outlet_name, "default-color")
 
             for entry in feed.entries:
                 clean_summary = html.unescape(entry.get('summary', 'No summary available.'))
                 clean_summary = re.sub('<.*?>', '', clean_summary)
 
-                # Trim summary if it's too long
                 MAX_SUMMARY_LENGTH = 250
                 if len(clean_summary) > MAX_SUMMARY_LENGTH:
                     clean_summary = clean_summary[:MAX_SUMMARY_LENGTH] + "..."
                 
-                # Check if 'published_parsed' exists before appending to avoid errors
                 if hasattr(entry, 'published_parsed'):
                     published_date = time.strftime('%B %d, %Y - %I:%M %p', entry.published_parsed)
                     article = {
@@ -173,9 +208,9 @@ def get_headlines():
                         'title': entry.title,
                         'summary': clean_summary,
                         'link': entry.link,
-                        'published': entry.published_parsed,  # Used for sorting
-                        'published_formatted': published_date, # Used for display
-                        'color': color_class,  # Add the color class
+                        'published': entry.published_parsed,
+                        'published_formatted': published_date,
+                        'color': color_class,
                     }
                     if outlet_name not in articles_by_source:
                         articles_by_source[outlet_name] = []
@@ -183,30 +218,68 @@ def get_headlines():
         except Exception:
             pass
             
-    # Sort articles within each source group by date, from newest to oldest
+    # Sort articles within each source group by date
     for source in articles_by_source:
         articles_by_source[source].sort(key=lambda x: x['published'], reverse=True)
 
-    # --- NEW NORMALIZATION LOGIC ---
+    # Normalize and interleave articles
     normalized_headlines = []
-    max_per_feed = 5 # Set the maximum number of articles per feed
+    max_per_feed = 5
 
-    # Interleave the articles from each source
     for i in range(max_per_feed):
         for source in articles_by_source:
             if i < len(articles_by_source[source]):
                 normalized_headlines.append(articles_by_source[source][i])
     
     return normalized_headlines
-    # --- END NEW LOGIC ---
 
-# Define a route to fetch and return the headlines as JSON
+
+def update_headlines_background():
+    """Background job that updates headlines periodically."""
+    global LATEST_HEADLINES
+    
+    while True:
+        try:
+            print("[NEWS] Fetching fresh headlines...")
+            headlines = fetch_headlines()
+            LATEST_HEADLINES = headlines
+            save_cache(headlines)
+            print(f"[NEWS] Updated cache with {len(headlines)} headlines")
+        except Exception as e:
+            print(f"[NEWS] Error updating headlines: {e}")
+        
+        time.sleep(UPDATE_INTERVAL)
+
+
+def start_background_thread():
+    """Start the background thread for updating headlines."""
+    global LATEST_HEADLINES
+    
+    # Load cache immediately on startup
+    load_cache()
+    
+    # If cache is empty, fetch immediately
+    if not LATEST_HEADLINES:
+        print("[NEWS] Cache empty, fetching initial data...")
+        try:
+            LATEST_HEADLINES = fetch_headlines()
+            save_cache(LATEST_HEADLINES)
+        except Exception as e:
+            print(f"[NEWS] Error fetching initial data: {e}")
+    
+    # Start background thread
+    thread = threading.Thread(target=update_headlines_background, daemon=True)
+    thread.start()
+    print("[NEWS] Background update thread started")
+
+
 @news.route("/headlines")
 def headlines_json():
-    headlines = get_headlines()
-    return jsonify(headlines)
+    """Return cached headlines."""
+    return jsonify(LATEST_HEADLINES)
 
-# Define a route to serve the HTML page
+
 @news.route("/")
 def index():
+    """Serve the news page."""
     return render_template("news.html")
