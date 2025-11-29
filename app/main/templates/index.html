@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             font-family: sans-serif;
@@ -14,94 +15,33 @@
             height: 100vh;
             background-color: #f0f0f0;
             margin: 0;
-        }
-
-        .container {
-            text-align: center;
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            margin-bottom: 1rem;
-        }
-
-        a {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        a:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-            margin: 0;
-        }
-
-        .container {
-            text-align: center;
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            margin-bottom: 1rem;
-        }
-
-        a {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        a:hover {
-            background-color: #0056b3;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Welcome to Milesenberg's Website</h1>
-        <p>Check out the latest headlines.</p>
-        <div style="display: flex; gap: 10px; justify-content: center;">
+    <div class="text-center bg-white p-8 rounded-lg shadow-lg max-w-4xl w-full">
+        <h1 class="text-3xl font-bold mb-4">Welcome to Milesenberg's Website</h1>
+        <p class="mb-8 text-gray-600">Select an application to launch.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- News Link -->
+            <a href="{{ url_for('news.index') }}"
+                class="block p-6 bg-gray-800 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors group text-left">
+                <h2 class="text-2xl font-bold mb-2 text-blue-400 group-hover:text-blue-300">News Headlines</h2>
+                <p class="text-gray-400">Latest headlines from around the world.</p>
+            </a>
+
+            <!-- Sequencer Link -->
             <a href="{{ url_for('sequencer.index') }}"
-                class="block p-6 bg-gray-800 rounded-lg border border-gray-700 hover:border-pink-500 transition-colors group">
+                class="block p-6 bg-gray-800 rounded-lg border border-gray-700 hover:border-pink-500 transition-colors group text-left">
                 <h2 class="text-2xl font-bold mb-2 text-pink-400 group-hover:text-pink-300">Big Beat Sequencer</h2>
                 <p class="text-gray-400">Create beats with an analogue-style drum machine.</p>
             </a>
 
+            <!-- Waifu Creator Link -->
             <a href="{{ url_for('waifu.index') }}"
-                class="block p-6 bg-gray-800 rounded-lg border border-gray-700 hover:border-rose-500 transition-colors group">
+                class="block p-6 bg-gray-800 rounded-lg border border-gray-700 hover:border-rose-500 transition-colors group text-left">
                 <h2 class="text-2xl font-bold mb-2 text-rose-400 group-hover:text-rose-300">Waifu Creator</h2>
                 <p class="text-gray-400">Design your own anime character with this interactive tool.</p>
             </a>
