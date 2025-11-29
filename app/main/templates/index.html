@@ -48,7 +48,10 @@
     <div class="container">
         <h1>Welcome to Milesenberg's Website</h1>
         <p>Check out the latest headlines.</p>
-        <a href="{{ url_for('news.index') }}">Go to News</a>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <a href="{{ url_for('news.index') }}">Go to News</a>
+            <a href="{{ url_for('sequencer.index') }}" style="background-color: #e91e63;">Big Beat Sequencer</a>
+        </div>
     </div>
 </body>
 
