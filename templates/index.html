@@ -1,44 +1,59 @@
-fetch('/headlines')
-.then(response => response.json())
-.then(headlines => {
-const container = document.getElementById('headlines-container');
-container.innerHTML = ''; // Clear any loading message
-headlines.forEach(headline => {
-const headlineDiv = document.createElement('div');
-headlineDiv.classList.add('headline');
+<!DOCTYPE html>
+<html lang="en">
 
-// Use the color data to set the class for the outlet name
-const outletSpan = document.createElement('span');
-outletSpan.classList.add('outlet', headline.color);
-outletSpan.textContent = headline.outlet;
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milesenberg's Headlines</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
 
-const titleLink = document.createElement('a');
-titleLink.href = headline.link;
-titleLink.textContent = headline.title;
-titleLink.target = "_blank";
-titleLink.rel = "noopener noreferrer";
+<body>
+    <div id="headlines-container" class="container">
+        <!-- Headlines will be injected here -->
+    </div>
 
-const titleHeading = document.createElement('h2');
-titleHeading.appendChild(outletSpan);
-titleHeading.appendChild(titleLink);
+    <script>
+        fetch('/headlines')
+            .then(response => response.json())
+            .then(headlines => {
+                const container = document.getElementById('headlines-container');
+                container.innerHTML = ''; // Clear any loading message
+                headlines.forEach(headline => {
+                    const headlineDiv = document.createElement('div');
+                    headlineDiv.classList.add('headline');
 
-const summaryPara = document.createElement('p');
-summaryPara.textContent = headline.summary;
+                    // Use the color data to set the class for the outlet name
+                    const outletSpan = document.createElement('span');
+                    outletSpan.classList.add('outlet', headline.color);
+                    outletSpan.textContent = headline.outlet;
 
-const publishedPara = document.createElement('p');
-publishedPara.classList.add('published-date');
-publishedPara.textContent = headline.published_formatted;
+                    const titleLink = document.createElement('a');
+                    titleLink.href = headline.link;
+                    titleLink.textContent = headline.title;
+                    titleLink.target = "_blank";
+                    titleLink.rel = "noopener noreferrer";
 
-headlineDiv.appendChild(titleHeading);
-headlineDiv.appendChild(summaryPara);
-headlineDiv.appendChild(publishedPara);
+                    const titleHeading = document.createElement('h2');
+                    titleHeading.appendChild(outletSpan);
+                    titleHeading.appendChild(titleLink);
 
-container.appendChild(headlineDiv);
-});
-})
-.catch(error => console.error('Error fetching headlines:', error));
-});
-</script>
+                    const summaryPara = document.createElement('p');
+                    summaryPara.textContent = headline.summary;
+
+                    const publishedPara = document.createElement('p');
+                    publishedPara.classList.add('published-date');
+                    publishedPara.textContent = headline.published_formatted;
+
+                    headlineDiv.appendChild(titleHeading);
+                    headlineDiv.appendChild(summaryPara);
+                    headlineDiv.appendChild(publishedPara);
+
+                    container.appendChild(headlineDiv);
+                });
+            })
+            .catch(error => console.error('Error fetching headlines:', error));
+    </script>
 </body>
 
 </html>
