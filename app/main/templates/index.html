@@ -4,27 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome</title>
+    <title>Milesenberg's Headlines</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            font-family: sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-            margin: 0;
-        }
-    </style>
 </head>
 
-<body>
-    <div class="text-center bg-white p-8 rounded-lg shadow-lg max-w-4xl w-full">
-        <h1 class="text-3xl font-bold mb-4">Welcome to Milesenberg's Website</h1>
-        <p class="mb-8 text-gray-600">Select an application to launch.</p>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-8">
+    <div class="max-w-6xl w-full">
+        <h1
+            class="text-5xl font-bold mb-12 text-center bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-transparent bg-clip-text">
+            Milesenberg's Headlines
+        </h1>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
             <!-- News Link -->
             <a href="{{ url_for('news.index') }}"
                 class="block p-6 bg-gray-800 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors group text-left">
@@ -39,11 +30,18 @@
                 <p class="text-gray-400">Create beats with an analogue-style drum machine.</p>
             </a>
 
-            <!-- Waifu Creator Link -->
+            <!-- Anime Character Creator Link -->
             <a href="{{ url_for('waifu.index') }}"
                 class="block p-6 bg-gray-800 rounded-lg border border-gray-700 hover:border-rose-500 transition-colors group text-left">
-                <h2 class="text-2xl font-bold mb-2 text-rose-400 group-hover:text-rose-300">Waifu Creator</h2>
+                <h2 class="text-2xl font-bold mb-2 text-rose-400 group-hover:text-rose-300">Anime Character Creator</h2>
                 <p class="text-gray-400">Design your own anime character with this interactive tool.</p>
+            </a>
+
+            <!-- Cyber Maker Link -->
+            <a href="{{ url_for('cyber.index') }}"
+                class="block p-6 bg-gray-800 rounded-lg border border-gray-700 hover:border-cyan-500 transition-colors group text-left">
+                <h2 class="text-2xl font-bold mb-2 text-cyan-400 group-hover:text-cyan-300">Cyber Maker</h2>
+                <p class="text-gray-400">Create custom cyberpunk characters.</p>
             </a>
         </div>
     </div>
