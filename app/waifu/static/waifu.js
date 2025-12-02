@@ -212,8 +212,8 @@ const generateAIImage = () => {
         const previewContainer = document.getElementById('preview-container');
         previewContainer.innerHTML = `
             <div class="relative group w-full max-w-[500px] flex flex-col items-center">
-                <img src="${imageUrl}" alt="Generated Waifu" class="w-auto max-h-[600px] border-4 border-pink-400/50 shadow-[0_0_30px_rgba(236,72,153,0.3)] animate-in fade-in duration-700 mb-4 rounded-lg">
-                <button onclick="downloadImage('${imageUrl}', 'waifu.jpg')" class="bg-pink-500 text-white px-6 py-2 font-bold rounded-lg flex items-center gap-2 hover:bg-pink-400 transition-all shadow-lg">
+                <img src="${imageUrl}" alt="Generated Character" class="w-auto max-h-[600px] border-4 border-pink-400/50 shadow-[0_0_30px_rgba(236,72,153,0.3)] animate-in fade-in duration-700 mb-4 rounded-lg">
+                <button onclick="downloadImage('${imageUrl}', 'character.jpg')" class="bg-pink-500 text-white px-6 py-2 font-bold rounded-lg flex items-center gap-2 hover:bg-pink-400 transition-all shadow-lg">
                     <i class="fas fa-download"></i> Download Image
                 </button>
                 <button onclick="resetPreview()" class="mt-2 text-xs text-slate-500 hover:text-pink-400 underline">Back to Editor</button>
@@ -270,7 +270,7 @@ const downloadSvg = () => {
         const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, 500, 1125);
         const pngUrl = canvas.toDataURL("image/png");
-        downloadImage(pngUrl, "waifu_draft.png");
+        downloadImage(pngUrl, "character_draft.png");
     };
     img.src = url;
 };
@@ -460,7 +460,7 @@ const renderControls = (tabId) => {
         html = `
             <div class="mb-6">
                 <div class="flex items-center gap-2 mb-3 text-pink-400 font-bold uppercase tracking-wider text-sm border-b border-pink-900/50 pb-1">
-                    <i class="fas fa-users"></i> <span>Famous Waifus</span>
+                    <i class="fas fa-users"></i> <span>Famous Characters</span>
                 </div>
                 <div class="space-y-3">
                     ${window.PRESETS.map(preset => `
@@ -481,7 +481,7 @@ const renderControls = (tabId) => {
                 <div class="absolute top-0 right-0 p-2 opacity-20 text-pink-500"><i class="fas fa-camera fa-3x"></i></div>
                 <h3 class="text-lg font-black flex items-center gap-2 mb-2 text-pink-400 uppercase"><i class="fas fa-camera"></i> AI Generator</h3>
                 <p class="text-slate-400 text-xs font-mono mb-6 leading-relaxed">
-                    Transform your waifu into a high-quality AI-generated image using Pollinations.ai
+                    Transform your character into a high-quality AI-generated image using Pollinations.ai
                 </p>
                 
                 <div class="flex items-center gap-2 text-[10px] font-mono bg-black p-2 border border-slate-800 mb-4 text-slate-500 uppercase rounded">
