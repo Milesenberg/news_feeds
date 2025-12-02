@@ -1,5 +1,6 @@
-from flask import render_template
-from app.cyber import cyber
+from flask import Blueprint, render_template
+
+cyber = Blueprint('cyber', __name__, template_folder='templates', static_folder='static')
 
 @cyber.route('/')
 def index():
