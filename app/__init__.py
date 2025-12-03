@@ -18,11 +18,6 @@ def create_app():
     # Start background thread for news feed updates
     start_background_thread()
 
-
-
-    from app.cyber.routes import cyber
-    app.register_blueprint(cyber, url_prefix='/cyber')
-
     from app.waifu.routes import waifu
     app.register_blueprint(waifu, url_prefix='/waifu')
 
