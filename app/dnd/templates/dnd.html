@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QFTL8TJLDJ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-QFTL8TJLDJ');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D&D Vibe Character Creator</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            transition: background-color 0.3s ease;
+        }
+
+        .card {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card.selected {
+            border-color: #2563eb;
+            /* Blue 600 */
+            background-color: #eff6ff;
+            /* Blue 50 */
+            transform: scale(1.02);
+        }
+
+        .step-container {
+            min-height: 400px;
+        }
+
+        .char-title {
+            color: #6d28d9;
+            /* Violet 700 */
+            font-weight: 800;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-start justify-center p-4 sm:p-8 bg-gray-900">
+
+    <div id="app" class="w-full max-w-4xl bg-white rounded-xl shadow-2xl p-6 sm:p-10 my-8">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-gray-900 char-title">
+                D&D Character Vibe Creator
+            </h1>
+            <p class="text-gray-500 mt-2">Create a character based on the fantasy role you love.</p>
+        </header>
+
+        <!-- Step Counter -->
+        <div id="step-counter" class="mb-8 flex justify-center space-x-2">
+            <!-- Steps will be rendered here -->
+        </div>
+
+        <!-- Main Content Area -->
+        <div id="content" class="step-container">
+            <!-- Content will be rendered by JavaScript -->
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="mt-8 flex justify-between">
+            <button id="back-button" onclick="prevStep()"
+                class="px-6 py-3 bg-gray-300 text-gray-800 rounded-lg font-semibold hover:bg-gray-400 transition"
+                disabled>
+                Back
+            </button>
+            <button id="next-button" onclick="nextStep()"
+                class="px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition"
+                disabled>
+                Next
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- Configuration Data ---
+
+        const archetypes = [
+            { id: 'tank', name: 'The Defender', vibe: 'I stand in the front, shield against danger, and protect my friends.', color: 'bg-red-500', icon: '🛡️' },
+            { id: 'stealth', name: 'The Shadow', vibe: 'I move in the shadows and strike from surprise or steal the secrets.', color: 'bg-green-500', icon: '🥷' },
+            { id: 'mystic', name: 'The Wild Mystic', vibe: 'I draw power from nature and ancient spirits to heal or command the elements.', color: 'bg-yellow-500', icon: '🌿' },
+            { id: 'social', name: 'The Charmer', vibe: 'I inspire others, bend conversations, and use words as my deadliest weapon.', color: 'bg-pink-500', icon: '👑' },
+            { id: 'arcane', name: 'The Scholar', vibe: 'I master forbidden knowledge and arcane formulae to reshape reality itself.', color: 'bg-blue-500', icon: '🔮' },
+        ];
+
+        const classes = {
+            tank: [
+                { id: 'fighter', name: 'Fighter', desc: 'A master of combat, highly reliable, and skilled with all weapons and armor. Simple, but effective.' },
+                { id: 'barbarian', name: 'Barbarian', desc: 'A primal warrior who enters a furious rage in battle. Raw strength and unstoppable fury.' },
+            ],
+            stealth: [
+                { id: 'rogue', name: 'Rogue', desc: 'Master of stealth, lock-picking, and striking vital points. High skill and hidden talent.' },
+                { id: 'ranger', name: 'Ranger', desc: 'A rugged tracker and hunter, at home in the wilderness. Often accompanied by an animal companion.' },
+            ],
+            mystic: [
+                { id: 'cleric', name: 'Cleric', desc: 'A channel of divine power, capable of mighty healing and holy smiting.' },
+                { id: 'druid', name: 'Druid', desc: 'Protector of the wild, can transform into animals and command the forces of nature.' },
+            ],
+            social: [
+                { id: 'bard', name: 'Bard', desc: 'A musician, storyteller, and magician rolled into one. Inspires allies and charms enemies.' },
+                { id: 'sorcerer', name: 'Sorcerer', desc: 'Magic comes from within—innate, powerful, and often chaotic. Your blood is the source of your power.' },
+            ],
+            arcane: [
+                { id: 'wizard', name: 'Wizard', desc: 'The quintessential spellcaster. Learns spells from ancient books and wields vast, intellectual power.' },
+                { id: 'warlock', name: 'Warlock', desc: 'Made a pact with a powerful, mysterious entity for magic. A dark bargain for great power.' },
+            ]
+        };
+
+        const races = [
+            { id: 'human', name: 'Human', desc: 'Highly adaptable, ambitious, and versatile. They fit in everywhere but are short-lived. The classic choice.' },
+            { id: 'elf', name: 'Elf', desc: 'Elegant, immortal, and connected to ancient magic or nature. Often viewed as haughty or wise by others.' },
+            { id: 'dwarf', name: 'Dwarf', desc: 'Stout, hardy, connected to the mountains, and masters of craftmanship. Loyal and slow to trust outsiders.' },
+            { id: 'halfling', name: 'Halfling', desc: 'Small, nimble, and surprisingly lucky. Value home, hearth, and good food above all else.' },
+            { id: 'dragonborn', name: 'Dragonborn', desc: 'Proud, scaled humanoids, often with a breath weapon matching their draconic ancestry. Very noticeable and distinct.' },
+            { id: 'tiefling', name: 'Tiefling', desc: 'Descended from infernal beings, they possess horns, tails, and an often troubled past. Intelligent and charismatic.' },
+        ];
+
+        const backgrounds = [
+            { id: 'noble', name: 'Noble', desc: 'You grew up with wealth, education, and respect. People listen when you speak, but you might struggle with common tasks.' },
+            { id: 'soldier', name: 'Soldier', desc: 'You are trained in combat, organization, and teamwork. You know military hierarchy and rules of engagement.' },
+            { id: 'urchin', name: 'Urchin', desc: 'You grew up on the mean streets, learning to survive through stealth and cunning. You know the city\'s secrets.' },
+            { id: 'sage', name: 'Sage', desc: 'You spent your life studying, reading, and learning. You know a lot about history and arcane lore, but little about people.' },
+        ];
+
+
+        // --- Application State ---
+
+        const state = {
+            step: 0,
+            maxSteps: 4,
+            character: {
+                archetypeId: null,
+                classId: null,
+                raceId: null,
+                backgroundId: null,
+            },
+            selection: null // Tracks the currently selected ID in the current step
+        };
+
+        // --- Core Logic ---
+
+        function renderStepCounter() {
+            const counterDiv = document.getElementById('step-counter');
+            counterDiv.innerHTML = '';
+
+            for (let i = 0; i <= state.maxSteps; i++) {
+                const isActive = i === state.step;
+                const isCompleted = i < state.step;
+
+                const circleClass = isCompleted ? 'bg-indigo-600' : (isActive ? 'bg-indigo-400' : 'bg-gray-300');
+                const textClass = isActive ? 'text-indigo-600 font-semibold' : 'text-gray-500';
+
+                const stepElement = document.createElement('div');
+                stepElement.className = 'flex flex-col items-center';
+
+                let stepTitle = '';
+                if (i === 0) stepTitle = 'Vibe';
+                else if (i === 1) stepTitle = 'Role';
+                else if (i === 2) stepTitle = 'Form';
+                else if (i === 3) stepTitle = 'Past';
+                else if (i === 4) stepTitle = 'Finish';
+
+                stepElement.innerHTML = `
+                    <div class="w-8 h-8 rounded-full ${circleClass} flex items-center justify-center text-white text-sm transition-all duration-300">
+                        ${isCompleted ? '✓' : i + 1}
+                    </div>
+                    <p class="mt-1 text-xs sm:text-sm ${textClass}">${stepTitle}</p>
+                `;
+                counterDiv.appendChild(stepElement);
+            }
+        }
+
+        function renderContent() {
+            const contentDiv = document.getElementById('content');
+            contentDiv.innerHTML = '';
+
+            // Reset selection tracker for the new step
+            state.selection = null;
+
+            switch (state.step) {
+                case 0:
+                    renderArchetypeSelection(contentDiv);
+                    break;
+                case 1:
+                    renderClassSelection(contentDiv);
+                    break;
+                case 2:
+                    renderRaceSelection(contentDiv);
+                    break;
+                case 3:
+                    renderBackgroundSelection(contentDiv);
+                    break;
+                case 4:
+                    renderSummary(contentDiv);
+                    break;
+                default:
+                    contentDiv.innerHTML = '<p class="text-center text-red-500">Error: Unknown step.</p>';
+            }
+
+            // Update navigation after rendering content
+            updateNavigation();
+        }
+
+        function updateNavigation() {
+            const backButton = document.getElementById('back-button');
+            const nextButton = document.getElementById('next-button');
+
+            backButton.disabled = state.step === 0;
+
+            if (state.step === state.maxSteps) {
+                nextButton.disabled = true;
+                nextButton.textContent = 'Complete';
+            } else {
+                nextButton.textContent = 'Next';
+                // Only enable Next if a selection has been made for the current step
+                let currentSelection = null;
+                if (state.step === 0) currentSelection = state.character.archetypeId;
+                else if (state.step === 1) currentSelection = state.character.classId;
+                else if (state.step === 2) currentSelection = state.character.raceId;
+                else if (state.step === 3) currentSelection = state.character.backgroundId;
+
+                nextButton.disabled = !currentSelection;
+            }
+        }
+
+        function selectItem(id) {
+            state.selection = id;
+
+            // Visually update cards
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('selected');
+                if (card.dataset.id === id) {
+                    card.classList.add('selected');
+                }
+            });
+
+            // Update navigation state
+            updateNavigation();
+        }
+
+        function createSelectionCard(id, name, desc, extraClass = '', clickHandler) {
+            const card = document.createElement('div');
+            card.className = `card p-4 rounded-xl ${extraClass} bg-white transition cursor-pointer flex-grow hover:border-indigo-400`;
+            card.setAttribute('data-id', id);
+            card.onclick = () => clickHandler(id);
+
+            const isSelected = (state.step === 0 && state.character.archetypeId === id) ||
+                (state.step === 1 && state.character.classId === id) ||
+                (state.step === 2 && state.character.raceId === id) ||
+                (state.step === 3 && state.character.backgroundId === id);
+
+            if (isSelected) {
+                card.classList.add('selected');
+                state.selection = id; // Ensure state.selection is set on load if already chosen
+            }
+
+
+            card.innerHTML = `
+                <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center">
+                    ${name}
+                </h3>
+                <p class="text-gray-600 text-sm">${desc}</p>
+            `;
+            return card;
+        }
+
+        function renderArchetypeSelection(container) {
+            container.innerHTML = `
+                <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">Step 1: Choose Your Core Vibe</h2>
+                <p class="text-center text-gray-600 mb-8">What kind of adventurer do you want to be? This choice guides your overall style.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    ${archetypes.map(a => {
+                return createSelectionCard(
+                    a.id,
+                    `${a.icon} ${a.name}`,
+                    a.vibe,
+                    '',
+                    selectItem
+                ).outerHTML;
+            }).join('')}
+                </div>
+            `;
+        }
+
+        function renderClassSelection(container) {
+            const archetypeId = state.character.archetypeId;
+            const archetype = archetypes.find(a => a.id === archetypeId);
+
+            if (!archetype) {
+                container.innerHTML = '<p class="text-center text-red-500">Please go back and select a Vibe first.</p>';
+                return;
+            }
+
+            container.innerHTML = `
+                <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">Step 2: Choose Your Class (The Role)</h2>
+                <p class="text-center text-gray-600 mb-4">You chose <span class="font-bold text-indigo-600">${archetype.name}</span>. Now pick the specific role that fits your chosen vibe.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    ${classes[archetypeId].map(c => {
+                return createSelectionCard(
+                    c.id,
+                    c.name,
+                    c.desc,
+                    '',
+                    selectItem
+                ).outerHTML;
+            }).join('')}
+                </div>
+            `;
+        }
+
+        function renderRaceSelection(container) {
+            container.innerHTML = `
+                <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">Step 3: Choose Your Race (The Form)</h2>
+                <p class="text-center text-gray-600 mb-8">This is your physical form and culture. It defines your appearance and your place in the world.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    ${races.map(r => {
+                return createSelectionCard(
+                    r.id,
+                    r.name,
+                    r.desc,
+                    '',
+                    selectItem
+                ).outerHTML;
+            }).join('')}
+                </div>
+            `;
+        }
+
+        function renderBackgroundSelection(container) {
+            container.innerHTML = `
+                <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">Step 4: Choose Your Background (The Past)</h2>
+                <p class="text-center text-gray-600 mb-8">Where did you come from before becoming an adventurer? This determines your skills and initial reputation.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    ${backgrounds.map(b => {
+                return createSelectionCard(
+                    b.id,
+                    b.name,
+                    b.desc,
+                    '',
+                    selectItem
+                ).outerHTML;
+            }).join('')}
+                </div>
+            `;
+        }
+
+        function renderSummary(container) {
+            const archetype = archetypes.find(a => a.id === state.character.archetypeId);
+            const classObj = Object.values(classes).flat().find(c => c.id === state.character.classId);
+            const raceObj = races.find(r => r.id === state.character.raceId);
+            const backgroundObj = backgrounds.find(b => b.id === state.character.backgroundId);
+
+            container.innerHTML = `
+                <h2 class="text-3xl font-bold text-center mb-6 text-indigo-700">🎉 Character Complete! 🎉</h2>
+                <p class="text-center text-gray-600 mb-8">Based on your choices, here is the concept for your new adventurer.</p>
+                
+                <div class="space-y-6 max-w-lg mx-auto p-6 bg-white border border-gray-200 rounded-xl shadow-lg">
+                    <div class="border-b pb-4">
+                        <p class="text-xl font-extrabold text-gray-900 mb-1">${raceObj.name} ${classObj.name}</p>
+                        <p class="text-sm text-gray-500">From a ${backgroundObj.name} background</p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 rounded-lg bg-gray-50">
+                        <span class="font-semibold text-lg text-indigo-600">Core Identity:</span>
+                        <span class="text-right text-gray-700">${classObj.name} (The ${archetype.name})</span>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-red-50 rounded-lg">
+                            <h4 class="font-bold text-lg text-red-700">Vibe: ${archetype.name}</h4>
+                            <p class="text-sm text-gray-700">${archetype.vibe}</p>
+                        </div>
+                        
+                        <div class="p-4 bg-blue-50 rounded-lg">
+                            <h4 class="font-bold text-lg text-blue-700">Form & Culture: ${raceObj.name}</h4>
+                            <p class="text-sm text-gray-700">${raceObj.desc}</p>
+                        </div>
+                        
+                        <div class="p-4 bg-green-50 rounded-lg">
+                            <h4 class="font-bold text-lg text-green-700">Backstory: ${backgroundObj.name}</h4>
+                            <p class="text-sm text-gray-700">${backgroundObj.desc}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4 text-center">
+                        <p class="text-md font-semibold text-gray-800">
+                            You are ready to play! Now you just need a name.
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- Navigation Handlers ---
+
+        function nextStep() {
+            if (state.step < state.maxSteps) {
+                // Save the selection before moving forward
+                if (state.step === 0) state.character.archetypeId = state.selection;
+                else if (state.step === 1) state.character.classId = state.selection;
+                else if (state.step === 2) state.character.raceId = state.selection;
+                else if (state.step === 3) state.character.backgroundId = state.selection;
+
+                state.step++;
+                renderContent();
+                renderStepCounter();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function prevStep() {
+            if (state.step > 0) {
+                state.step--;
+                renderContent();
+                renderStepCounter();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // --- Initialization ---
+
+        window.onload = () => {
+            renderContent();
+            renderStepCounter();
+        };
+
+    </script>
+</body>
+
+</html>

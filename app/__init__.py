@@ -24,5 +24,17 @@ def create_app():
     from app.time.routes import time
     app.register_blueprint(time, url_prefix='/time')
 
+    from app.narrative.routes import narrative
+    app.register_blueprint(narrative, url_prefix='/narrative')
+
+    from app.picard.routes import picard
+    app.register_blueprint(picard, url_prefix='/picard')
+
+    from app.justice.routes import justice
+    app.register_blueprint(justice, url_prefix='/justice')
+
+    from app.dnd.routes import dnd
+    app.register_blueprint(dnd, url_prefix='/dnd')
+
     return app
 

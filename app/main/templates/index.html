@@ -2,6 +2,14 @@
 <html lang="en">
 
 <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QFTL8TJLDJ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-QFTL8TJLDJ');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Milesenberg Digital</title>
@@ -104,6 +112,95 @@
                     <p class="text-slate-400 mb-8 h-12">Temporal navigation and time travel simulator.</p>
                     <a href="{{ url_for('time.index') }}"
                         class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-indigo-400 hover:text-indigo-300 transition-colors">
+                        Launch App <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 5: Narrative Game -->
+            <div
+                class="bg-slate-900 border border-slate-800 rounded-xl p-8 hover:border-emerald-500 transition-all group relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fas fa-book-open fa-6x text-emerald-500"></i>
+                </div>
+                <div class="relative z-10">
+                    <div
+                        class="w-12 h-12 bg-emerald-900/30 rounded-lg flex items-center justify-center mb-6 text-emerald-400 border border-emerald-500/30">
+                        <i class="fas fa-terminal text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
+                        Cyberpunk Narrative
+                    </h2>
+                    <p class="text-slate-400 mb-8 h-12">Interactive story with choices and consequences in a neon-soaked
+                        future.</p>
+                    <a href="{{ url_for('narrative.index') }}"
+                        class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-emerald-400 hover:text-emerald-300 transition-colors">
+                        Launch App <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 6: Star Trek Curator -->
+            <div
+                class="bg-slate-900 border border-slate-800 rounded-xl p-8 hover:border-amber-500 transition-all group relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fas fa-star fa-6x text-amber-500"></i>
+                </div>
+                <div class="relative z-10">
+                    <div
+                        class="w-12 h-12 bg-amber-900/30 rounded-lg flex items-center justify-center mb-6 text-amber-400 border border-amber-500/30">
+                        <i class="fas fa-play text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-amber-400 transition-colors">
+                        Trek Curator
+                    </h2>
+                    <p class="text-slate-400 mb-8 h-12">Personalized Star Trek viewing guide to prepare for Picard.</p>
+                    <a href="{{ url_for('picard.index') }}"
+                        class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-amber-400 hover:text-amber-300 transition-colors">
+                        Launch App <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 7: Justice Duel -->
+            <div
+                class="bg-slate-900 border border-slate-800 rounded-xl p-8 hover:border-teal-500 transition-all group relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fas fa-fist-raised fa-6x text-teal-500"></i>
+                </div>
+                <div class="relative z-10">
+                    <div
+                        class="w-12 h-12 bg-teal-900/30 rounded-lg flex items-center justify-center mb-6 text-teal-400 border border-teal-500/30">
+                        <i class="fas fa-bolt text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-teal-400 transition-colors">
+                        Justice Duel
+                    </h2>
+                    <p class="text-slate-400 mb-8 h-12">Strategic card battle game inspired by Marvel Snap.</p>
+                    <a href="{{ url_for('justice.index') }}"
+                        class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-teal-400 hover:text-teal-300 transition-colors">
+                        Launch App <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 8: D&D Character Creator -->
+            <div
+                class="bg-slate-900 border border-slate-800 rounded-xl p-8 hover:border-violet-500 transition-all group relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fas fa-dice-d20 fa-6x text-violet-500"></i>
+                </div>
+                <div class="relative z-10">
+                    <div
+                        class="w-12 h-12 bg-violet-900/30 rounded-lg flex items-center justify-center mb-6 text-violet-400 border border-violet-500/30">
+                        <i class="fas fa-hat-wizard text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-violet-400 transition-colors">
+                        D&D Character Creator
+                    </h2>
+                    <p class="text-slate-400 mb-8 h-12">Create your fantasy character based on the role you want to play.</p>
+                    <a href="{{ url_for('dnd.index') }}"
+                        class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-violet-400 hover:text-violet-300 transition-colors">
                         Launch App <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
