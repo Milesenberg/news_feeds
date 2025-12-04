@@ -21,5 +21,8 @@ def create_app():
     from app.waifu.routes import waifu
     app.register_blueprint(waifu, url_prefix='/waifu')
 
+    from app.time.routes import time
+    app.register_blueprint(time, url_prefix='/time')
+
     return app
 
