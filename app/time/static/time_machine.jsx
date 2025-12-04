@@ -167,9 +167,17 @@ const App = () => {
     const [userAction, setUserAction] = useState("");
     const [showTerminal, setShowTerminal] = useState(false);
 
+    // Log autoscroll ref
+    const logEndRef = useRef(null);
+
     const addLog = (msg) => {
-        setLogs(prev => [`[${new Date().toLocaleTimeString('en-GB')}] ${msg}`, ...prev.slice(0, 8)]);
+        setLogs(prev => [...prev, `[${new Date().toLocaleTimeString('en-GB')}] ${msg}`].slice(-9));
     };
+
+    // Auto-scroll to latest log
+    useEffect(() => {
+        logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [logs]);
 
     // --- DATE MANIPULATION HANDLERS ---
     const adjustYear = (amount) => {
@@ -510,12 +518,13 @@ const App = () => {
                         <div className="sticky top-0 bg-black pb-2 border-b border-gray-800 mb-2 flex items-center gap-2 text-gray-400 uppercase">
                             <FAIcon icon="lock" size={12} /> Mission Log
                         </div>
-                        <div className="flex flex-col-reverse gap-1">
+                        <div className="flex flex-col gap-1">
                             {logs.map((log, idx) => (
-                                <div key={idx} className={`${idx === 0 ? 'text-green-400 font-bold' : 'text-gray-500'}`}>
+                                <div key={idx} className={`${idx === logs.length - 1 ? 'text-green-400 font-bold' : 'text-gray-500'}`}>
                                     <span className="mr-2 text-gray-700">{'>'}</span>{log}
                                 </div>
                             ))}
+                            <div ref={logEndRef} />
                         </div>
                     </div>
                 </div>
