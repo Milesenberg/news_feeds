@@ -279,6 +279,16 @@ function JusticeDuel() {
         // Double check energy
         if (energy < card.cost) return;
 
+        // Location-specific restrictions
+        const location = locations[locIndex];
+        if (location && location.revealed) {
+            // Themyscira: Only cards costing 4+ can be played here
+            if (location.id === 'l3' && card.cost < 4) {
+                console.warn(`${card.name} (cost ${card.cost}) cannot be played at ${location.name} - requires cost 4+`);
+                return; // Block the move
+            }
+        }
+
         // Execute Move
         const newHand = [...playerHand];
         newHand.splice(cardIndex, 1);
