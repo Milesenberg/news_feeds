@@ -11,18 +11,18 @@ const MAX_TURNS = 6;
 const MAX_CARDS_PER_LOCATION = 4;
 
 const CARDS_DB = [
-    { id: 'c1', name: 'The Flash', cost: 1, power: 2, color: 'bg-red-600', desc: 'Fast start.' },
-    { id: 'c2', name: 'Robin', cost: 1, power: 1, color: 'bg-green-600', ability: 'buff_self', abilityVal: 2, desc: 'On Reveal: +2 Power (Simulated +2).' },
-    { id: 'c3', name: 'Harley Quinn', cost: 2, power: 3, color: 'bg-pink-600', desc: 'Chaos agent.' },
-    { id: 'c4', name: 'Cyborg', cost: 2, power: 4, color: 'bg-gray-500', desc: 'Solid tech defence.' },
-    { id: 'c5', name: 'Batman', cost: 3, power: 4, color: 'bg-slate-800', ability: 'buff_loc', abilityVal: 1, desc: 'On Reveal: Give your other cards here +1 Power.' },
-    { id: 'c6', name: 'Green Lantern', cost: 3, power: 5, color: 'bg-green-500', desc: 'Willpower construct.' },
-    { id: 'c7', name: 'Aquaman', cost: 4, power: 6, color: 'bg-orange-500', desc: 'King of Atlantis.' },
-    { id: 'c8', name: 'Wonder Woman', cost: 4, power: 7, color: 'bg-red-700', desc: 'Amazonian strength.' },
-    { id: 'c9', name: 'The Joker', cost: 5, power: 3, color: 'bg-purple-600', ability: 'debuff_opp', abilityVal: -2, desc: 'On Reveal: Afflict all enemy cards here with -1 Power.' },
-    { id: 'c10', name: 'Superman', cost: 6, power: 12, color: 'bg-blue-600', desc: 'Man of Steel.' },
-    { id: 'c11', name: 'Lex Luthor', cost: 5, power: 8, color: 'bg-green-800', desc: 'Genius intellect.' },
-    { id: 'c12', name: 'Darkseid', cost: 6, power: 11, color: 'bg-gray-900', ability: 'destroy', desc: 'On Reveal: Destroy friendly card for power.' },
+    { id: 'c1', name: 'The Flash', cost: 1, power: 2, color: 'bg-red-600', desc: 'Fast start.', image: '/justice/static/images/flash_portrait_card_1764961461610.png' },
+    { id: 'c2', name: 'Robin', cost: 1, power: 1, color: 'bg-green-600', ability: 'buff_self', abilityVal: 2, desc: 'On Reveal: +2 Power (Simulated +2).', image: '/justice/static/images/robin_portrait_card_1764961477327.png' },
+    { id: 'c3', name: 'Harley Quinn', cost: 2, power: 3, color: 'bg-pink-600', desc: 'Chaos agent.', image: '/justice/static/images/harley_quinn_portrait_1764961494644.png' },
+    { id: 'c4', name: 'Cyborg', cost: 2, power: 4, color: 'bg-gray-500', desc: 'Solid tech defence.', image: '/justice/static/images/cyborg_portrait_card_1764961510189.png' },
+    { id: 'c5', name: 'Batman', cost: 3, power: 4, color: 'bg-slate-800', ability: 'buff_loc', abilityVal: 1, desc: 'On Reveal: Give your other cards here +1 Power.', image: '/justice/static/images/batman_portrait_card_1764961208368.png' },
+    { id: 'c6', name: 'Green Lantern', cost: 3, power: 5, color: 'bg-green-500', desc: 'Willpower construct.', image: '/justice/static/images/green_lantern_portrait_1764961524844.png' },
+    { id: 'c7', name: 'Aquaman', cost: 4, power: 6, color: 'bg-orange-500', desc: 'King of Atlantis.', image: '/justice/static/images/aquaman_portrait_card_1764961541671.png' },
+    { id: 'c8', name: 'Wonder Woman', cost: 4, power: 7, color: 'bg-red-700', desc: 'Amazonian strength.', image: '/justice/static/images/wonder_woman_portrait_v2_1764961408971.png' },
+    { id: 'c9', name: 'The Joker', cost: 5, power: 3, color: 'bg-purple-600', ability: 'debuff_opp', abilityVal: -2, desc: 'On Reveal: Afflict all enemy cards here with -1 Power.', image: '/justice/static/images/joker_portrait_card_1764961557070.png' },
+    { id: 'c10', name: 'Superman', cost: 6, power: 12, color: 'bg-blue-600', desc: 'Man of Steel.', image: '/justice/static/images/superman_portrait_card_1764961223519.png' },
+    { id: 'c11', name: 'Lex Luthor', cost: 5, power: 8, color: 'bg-green-800', desc: 'Genius intellect.', image: '/justice/static/images/lex_luthor_portrait_1764961571316.png' },
+    { id: 'c12', name: 'Darkseid', cost: 6, power: 11, color: 'bg-gray-900', ability: 'destroy', desc: 'On Reveal: Destroy friendly card for power.', image: '/justice/static/images/darkseid_portrait_card_1764961586925.png' },
 ];
 
 const LOCATIONS_DB = [
