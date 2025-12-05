@@ -17,7 +17,7 @@ const STORY_DATA = {
         id: 'start',
         location: 'neo_tokyo_slums',
         locationName: 'Sector 7: The Dregs',
-        bgClass: "bg-gradient-to-b from-slate-900 via-slate-800 to-black",
+        bgImage: '/narrative/static/images/sector7_slums_bg_1764928832835.png',
         character: 'unknown',
         speakerName: 'System',
         text: "Boot sequence initiated... Neural link established. Welcome back to the grid, runner. Your vitals are stabilising, but memory sectors seem corrupted.",
@@ -30,7 +30,7 @@ const STORY_DATA = {
         id: 'wake_up',
         location: 'clinic_alley',
         locationName: 'Doc Stitch\'s Back Alley',
-        bgImage: 'https://replicate.delivery/xezq/l83HbCGUNcrlNZhcHVhuCAVBeM6YjvzfCKEjF2g7CZfyKJfWB/out-0.webp',
+        bgImage: '/narrative/static/images/clinic_alley_bg_1764928786118.png',
         character: 'doc_stitch',
         speakerName: 'Doc Stitch',
         text: "Easy there, chrome-dome. You took a nasty shock from that ICE breaker. Had to replace your subnet processor with a spare I found in a toaster.",
@@ -43,7 +43,7 @@ const STORY_DATA = {
         id: 'diagnostics',
         location: 'internal_mind',
         locationName: 'Neural Interface [DEBUG MODE]',
-        bgClass: "bg-zinc-950 border-cyan-500/20",
+        bgImage: '/narrative/static/images/neural_interface_bg_1764928815915.png',
         character: 'ai_companion',
         speakerName: 'A.L.I.C.E.',
         text: "Running system check... CRITICAL ERROR. Credits: 0. Street Cred: Low. Hardware integrity: 64%. You really messed up this time.",
@@ -55,7 +55,7 @@ const STORY_DATA = {
         id: 'toaster_joke',
         location: 'clinic_alley',
         locationName: 'Doc Stitch\'s Back Alley',
-        bgImage: 'https://images.unsplash.com/photo-1605218457336-9273c3328009?q=80&w=1920&auto=format&fit=crop',
+        bgImage: '/narrative/static/images/clinic_alley_bg_1764928786118.png',
         character: 'doc_stitch',
         speakerName: 'Doc Stitch',
         text: "Hey, it was a high-end toaster. Military grade heating coils. You should feel warmer already. That'll be 500 creds.",
@@ -74,7 +74,7 @@ const STORY_DATA = {
         id: 'business',
         location: 'clinic_alley',
         locationName: 'Doc Stitch\'s Back Alley',
-        bgImage: 'https://images.unsplash.com/photo-1605218457336-9273c3328009?q=80&w=1920&auto=format&fit=crop',
+        bgImage: '/narrative/static/images/clinic_alley_bg_1764928786118.png',
         character: 'doc_stitch',
         speakerName: 'Doc Stitch',
         text: "Cold as always. I respect that. 500 creds for the patch job. Don't make me repossess your arm.",
@@ -92,7 +92,7 @@ const STORY_DATA = {
         id: 'debt',
         location: 'street_market',
         locationName: 'Neon Market',
-        bgImage: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=1920&auto=format&fit=crop',
+        bgImage: '/narrative/static/images/neon_market_bg_1764928801671.png',
         character: 'fixer_jax',
         speakerName: 'Jax (The Fixer)',
         text: "Hearing you owe people money, Runner. I might have a job that can wipe the slate clean. High risk, high reward. Interested?",
@@ -280,38 +280,26 @@ const SlideInGraphic = ({ data }) => {
 };
 
 const CharacterDisplay = ({ characterId }) => {
-    const getCharacterVisual = () => {
+    const getCharacterData = () => {
         switch (characterId) {
             case 'doc_stitch':
-                return (
-                    <div className="w-full h-full flex items-center justify-center bg-zinc-900 border-2 border-yellow-600 shadow-[0_0_15px_rgba(202,138,4,0.3)]">
-                        <div className="text-center">
-                            <FAIcon icon="chart-line" size={64} className="mx-auto text-yellow-500 mb-2 animate-pulse" />
-                            <div className="text-xs text-yellow-500 uppercase tracking-widest">Doc Stitch</div>
-                            <div className="text-[10px] text-zinc-500">Cyber-Surgeon</div>
-                        </div>
-                    </div>
-                );
+                return {
+                    image: '/narrative/static/images/doc_stitch_portrait_1764928742522.png',
+                    borderColor: 'border-yellow-600',
+                    glowColor: 'shadow-[0_0_20px_rgba(202,138,4,0.5)]'
+                };
             case 'fixer_jax':
-                return (
-                    <div className="w-full h-full flex items-center justify-center bg-zinc-900 border-2 border-purple-600 shadow-[0_0_15px_rgba(147,51,234,0.3)]">
-                        <div className="text-center">
-                            <FAIcon icon="bolt" size={64} className="mx-auto text-purple-500 mb-2" />
-                            <div className="text-xs text-purple-500 uppercase tracking-widest">Jax</div>
-                            <div className="text-[10px] text-zinc-500">The Fixer</div>
-                        </div>
-                    </div>
-                );
+                return {
+                    image: '/narrative/static/images/jax_fixer_portrait_1764928757273.png',
+                    borderColor: 'border-purple-600',
+                    glowColor: 'shadow-[0_0_20px_rgba(147,51,234,0.5)]'
+                };
             case 'ai_companion':
-                return (
-                    <div className="w-full h-full flex items-center justify-center bg-zinc-900 border-2 border-cyan-600 shadow-[0_0_15px_rgba(8,145,178,0.3)]">
-                        <div className="text-center">
-                            <FAIcon icon="microchip" size={64} className="mx-auto text-cyan-500 mb-2" />
-                            <div className="text-xs text-cyan-500 uppercase tracking-widest">A.L.I.C.E.</div>
-                            <div className="text-[10px] text-zinc-500">System AI</div>
-                        </div>
-                    </div>
-                );
+                return {
+                    image: '/narrative/static/images/alice_ai_portrait_1764928771507.png',
+                    borderColor: 'border-cyan-600',
+                    glowColor: 'shadow-[0_0_20px_rgba(8,145,178,0.5)]'
+                };
             default:
                 return null;
         }
@@ -319,9 +307,18 @@ const CharacterDisplay = ({ characterId }) => {
 
     if (characterId === 'unknown') return null;
 
+    const charData = getCharacterData();
+    if (!charData) return null;
+
     return (
         <div className="w-48 h-48 md:w-64 md:h-64 transition-all duration-500 ease-in-out transform translate-y-0 opacity-100">
-            {getCharacterVisual()}
+            <div className={`w-full h-full overflow-hidden border-4 ${charData.borderColor} ${charData.glowColor} bg-black`}>
+                <img
+                    src={charData.image}
+                    alt="Character Portrait"
+                    className="w-full h-full object-cover"
+                />
+            </div>
         </div>
     );
 };
