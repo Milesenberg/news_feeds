@@ -26,11 +26,11 @@ const CARDS_DB = [
 ];
 
 const LOCATIONS_DB = [
-    { id: 'l1', name: 'Gotham City', color: 'from-slate-800 to-slate-900', effect: 'No special effect.' },
-    { id: 'l2', name: 'Metropolis', color: 'from-blue-400 to-blue-600', effect: 'Cards here get +1 Power.' },
-    { id: 'l3', name: 'Themyscira', color: 'from-yellow-600 to-red-600', effect: 'Only cards costing 4+ can be played here.' },
-    { id: 'l4', name: 'Arkham Asylum', color: 'from-green-900 to-slate-900', effect: 'Cards here have -1 Power.' },
-    { id: 'l5', name: 'Fortress of Solitude', color: 'from-cyan-100 to-blue-200', effect: 'Turn 5: Cards here swap sides (Not implemented).' },
+    { id: 'l1', name: 'Gotham City', color: 'from-slate-800 to-slate-900', effect: 'No special effect.', bgImage: '/justice/static/images/gotham_city_background_1764963558076.png' },
+    { id: 'l2', name: 'Metropolis', color: 'from-blue-400 to-blue-600', effect: 'Cards here get +1 Power.', bgImage: '/justice/static/images/metropolis_background_1764963572865.png' },
+    { id: 'l3', name: 'Themyscira', color: 'from-yellow-600 to-red-600', effect: 'Only cards costing 4+ can be played here.', bgImage: '/justice/static/images/themyscira_background_1764963587114.png' },
+    { id: 'l4', name: 'Arkham Asylum', color: 'from-green-900 to-slate-900', effect: 'Cards here have -1 Power.', bgImage: '/justice/static/images/arkham_asylum_background_1764963601763.png' },
+    { id: 'l5', name: 'Fortress of Solitude', color: 'from-cyan-100 to-blue-200', effect: 'Turn 5: Cards here swap sides (Not implemented).', bgImage: '/justice/static/images/fortress_solitude_background_1764963618102.png' },
 ];
 
 // --- Helper Functions ---
@@ -88,15 +88,10 @@ const Card = ({ card, onClick, isSelected, isOpponent, mini = false }) => {
             {/* Art Placeholder */}
             <div className={`w-full ${mini ? 'h-8' : 'h-14'} bg-black/20 rounded mt-3 flex items-center justify-center overflow-hidden`}>
                 {card.image ? (
-                    <img 
-                        src={card.image} 
+                    <img
+                        src={card.image}
                         alt={card.name}
                         className="w-full h-full object-cover"
-                        onError={(e) => {
-                            console.error(`Failed to load image for ${card.name}:`, card.image);
-                            console.error('Error event:', e);
-                        }}
-                        onLoad={() => console.log(`✓ Loaded: ${card.name}`)}
                     />
                 ) : (
                     <span className={`${mini ? 'text-[8px]' : 'text-[10px]'} font-bold opacity-80 uppercase tracking-wider text-center px-1`}>
@@ -145,9 +140,16 @@ const Location = ({ data, index, playerCards, opponentCards, onSelect, activeTur
         flex-1 h-full min-h-[350px] flex flex-col items-center justify-between
         bg-gradient-to-b ${data.color || 'from-gray-800 to-gray-900'} rounded-xl border-4 ${borderClass} shadow-2xl overflow-hidden relative
       `}
+            style={data.bgImage ? {
+                backgroundImage: `url(${data.bgImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+            } : {}}
         >
+            {/* Dark overlay for readability */}
+            {data.bgImage && <div className="absolute inset-0 bg-black/50 z-0"></div>}
             {/* Opponent Side */}
-            <div className="w-full flex-1 p-2 flex flex-col items-center justify-start gap-1 bg-black/30">
+            <div className="w-full flex-1 p-2 flex flex-col items-center justify-start gap-1 bg-black/30 relative z-10">
                 <div className="w-8 h-8 rounded-full bg-slate-800 text-white font-bold flex items-center justify-center border-2 border-slate-600 shadow-md mb-2">
                     {totalPowerOpponent}
                 </div>
@@ -161,7 +163,7 @@ const Location = ({ data, index, playerCards, opponentCards, onSelect, activeTur
             </div>
 
             {/* Location Info */}
-            <div className="w-full py-2 bg-black/60 backdrop-blur-sm border-y border-white/10 flex flex-col items-center justify-center z-10">
+            <div className="w-full py-2 bg-black/60 backdrop-blur-sm border-y border-white/10 flex flex-col items-center justify-center z-20">
                 <h3 className="text-white font-bold text-xs uppercase tracking-widest shadow-black drop-shadow-md text-center px-1">
                     {data.revealed ? data.name : "Unrevealed"}
                 </h3>
@@ -171,7 +173,7 @@ const Location = ({ data, index, playerCards, opponentCards, onSelect, activeTur
             </div>
 
             {/* Player Side (Interactive Zone) */}
-            <div className={`w-full flex-1 p-2 flex flex-col items-center justify-end gap-1 hover:bg-white/5 transition-colors cursor-pointer ${activeTurn ? 'ring-inset hover:ring-2 ring-white/30' : ''}`}>
+            <div className={`w-full flex-1 p-2 flex flex-col items-center justify-end gap-1 hover:bg-white/5 transition-colors cursor-pointer relative z-10 ${activeTurn ? 'ring-inset hover:ring-2 ring-white/30' : ''}`}>
                 <div className="grid grid-cols-2 gap-1 w-full max-w-[140px] mb-2">
                     {playerCards.map((c, i) => (
                         <div key={i} className="flex justify-center">
