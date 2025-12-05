@@ -81,19 +81,26 @@ def voice_api():
     Request: {"text": "dialogue text", "character_id": "doc_stitch"}
     Response: MP3 audio file
     """
+    print("[VOICE API] Request received")  # Render log
     try:
         data = request.get_json()
         text = data.get('text', '').strip()
         character_id = data.get('character_id', 'unknown')
         
+        print(f"[VOICE API] Text: {text[:50]}..., Character: {character_id}")  # Render log
+        
         if not text:
+            print("[VOICE API] ERROR: No text provided")
             return jsonify({'error': 'No text provided'}), 400
         
         # Check cache first
         cache_file = CACHE_DIR / get_cache_filename(text, character_id)
         
+        print(f"[VOICE API] Cache file: {cache_file}, Exists: {cache_file.exists()}")  # Render log
+        
         if cache_file.exists():
             # Serve cached file
+            print("[VOICE API] Serving from cache")
             return send_file(
                 cache_file,
                 mimetype='audio/mpeg',
@@ -102,8 +109,10 @@ def voice_api():
             )
         
         # Generate new voice
+        print("[VOICE API] Generating new voice with ElevenLabs")
         audio_file = generate_voice(text, character_id)
         
+        print(f"[VOICE API] Voice generated successfully: {audio_file}")
         return send_file(
             audio_file,
             mimetype='audio/mpeg',
@@ -112,9 +121,14 @@ def voice_api():
         )
         
     except ValueError as e:
+        print(f"[VOICE API] ValueError: {e}")
         return jsonify({'error': str(e)}), 500
     except RuntimeError as e:
+        print(f"[VOICE API] RuntimeError: {e}")
         return jsonify({'error': str(e)}), 500
     except Exception as e:
+        print(f"[VOICE API] Unexpected error: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
         current_app.logger.error(f"Voice API error: {e}")
         return jsonify({'error': 'Voice generation failed'}), 500
