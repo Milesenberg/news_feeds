@@ -140,14 +140,14 @@ const Location = ({ data, index, playerCards, opponentCards, onSelect, activeTur
         flex-1 h-full min-h-[350px] flex flex-col items-center justify-between
         bg-gradient-to-b ${data.color || 'from-gray-800 to-gray-900'} rounded-xl border-4 ${borderClass} shadow-2xl overflow-hidden relative
       `}
-            style={data.bgImage ? {
+            style={(data.bgImage && data.revealed) ? {
                 backgroundImage: `url(${data.bgImage})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
             } : {}}
         >
             {/* Dark overlay for readability */}
-            {data.bgImage && <div className="absolute inset-0 bg-black/50 z-0"></div>}
+            {(data.bgImage && data.revealed) && <div className="absolute inset-0 bg-black/50 z-0"></div>}
             {/* Opponent Side */}
             <div className="w-full flex-1 p-2 flex flex-col items-center justify-start gap-1 bg-black/30 relative z-10">
                 <div className="w-8 h-8 rounded-full bg-slate-800 text-white font-bold flex items-center justify-center border-2 border-slate-600 shadow-md mb-2">
