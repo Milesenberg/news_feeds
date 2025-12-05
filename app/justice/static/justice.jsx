@@ -12,17 +12,18 @@ const MAX_CARDS_PER_LOCATION = 4;
 
 const CARDS_DB = [
     { id: 'c1', name: 'The Flash', cost: 1, power: 2, color: 'bg-red-600', desc: 'Fast start.', image: '/justice/static/images/flash_portrait_card_1764961461610.png' },
-    { id: 'c2', name: 'Robin', cost: 1, power: 1, color: 'bg-green-600', ability: 'buff_self', abilityVal: 2, desc: 'On Reveal: +2 Power (Simulated +2).', image: '/justice/static/images/robin_portrait_card_1764961477327.png' },
+    { id: 'c2', name: 'Robin', cost: 1, power: 1, color: 'bg-green-600', ability: 'buff_self', abilityVal: 2, desc: 'On Reveal: +2 Power.', image: '/justice/static/images/robin_portrait_card_1764961477327.png' },
     { id: 'c3', name: 'Harley Quinn', cost: 2, power: 3, color: 'bg-pink-600', desc: 'Chaos agent.', image: '/justice/static/images/harley_quinn_portrait_1764961494644.png' },
+    { id: 'c13', name: 'Catwoman', cost: 2, power: 3, color: 'bg-purple-800', desc: 'Feline thief.', image: '/justice/static/images/catwoman_portrait_card_1764965955979.png' },
     { id: 'c4', name: 'Cyborg', cost: 2, power: 4, color: 'bg-gray-500', desc: 'Solid tech defence.', image: '/justice/static/images/cyborg_portrait_card_1764961510189.png' },
-    { id: 'c5', name: 'Batman', cost: 3, power: 4, color: 'bg-slate-800', ability: 'buff_loc', abilityVal: 1, desc: 'On Reveal: Give your other cards here +1 Power.', image: '/justice/static/images/batman_portrait_card_1764961208368.png' },
+    { id: 'c5', name: 'Batman', cost: 3, power: 4, color: 'bg-slate-800', ability: 'buff_loc', abilityVal: 1, desc: 'On Reveal: +1 Power to allies here.', image: '/justice/static/images/batman_portrait_card_1764961208368.png' },
     { id: 'c6', name: 'Green Lantern', cost: 3, power: 5, color: 'bg-green-500', desc: 'Willpower construct.', image: '/justice/static/images/green_lantern_portrait_1764961524844.png' },
     { id: 'c7', name: 'Aquaman', cost: 4, power: 6, color: 'bg-orange-500', desc: 'King of Atlantis.', image: '/justice/static/images/aquaman_portrait_card_1764961541671.png' },
     { id: 'c8', name: 'Wonder Woman', cost: 4, power: 7, color: 'bg-red-700', desc: 'Amazonian strength.', image: '/justice/static/images/wonder_woman_portrait_v2_1764961408971.png' },
-    { id: 'c9', name: 'The Joker', cost: 5, power: 3, color: 'bg-purple-600', ability: 'debuff_opp', abilityVal: -2, desc: 'On Reveal: Afflict all enemy cards here with -1 Power.', image: '/justice/static/images/joker_portrait_card_1764961557070.png' },
+    { id: 'c9', name: 'The Joker', cost: 5, power: 3, color: 'bg-purple-600', ability: 'debuff_opp', abilityVal: -1, desc: 'On Reveal: -1 Power to enemies here.', image: '/justice/static/images/joker_portrait_card_1764961557070.png' },
     { id: 'c10', name: 'Superman', cost: 6, power: 12, color: 'bg-blue-600', desc: 'Man of Steel.', image: '/justice/static/images/superman_portrait_card_1764961223519.png' },
     { id: 'c11', name: 'Lex Luthor', cost: 5, power: 8, color: 'bg-green-800', desc: 'Genius intellect.', image: '/justice/static/images/lex_luthor_portrait_1764961571316.png' },
-    { id: 'c12', name: 'Darkseid', cost: 6, power: 11, color: 'bg-gray-900', ability: 'destroy', desc: 'On Reveal: Destroy friendly card for power.', image: '/justice/static/images/darkseid_portrait_card_1764961586925.png' },
+    { id: 'c12', name: 'Darkseid', cost: 6, power: 11, color: 'bg-gray-900', ability: 'destroy', desc: 'On Reveal: Sacrifice ally for +3 Power.', image: '/justice/static/images/darkseid_portrait_card_1764961586925.png' },
 ];
 
 const LOCATIONS_DB = [
@@ -302,6 +303,7 @@ function JusticeDuel() {
         setSelectedCardId(null);
     };
 
+
     const calculatePower = (boardSide, locIndex) => {
         // Safety check for empty locations (during init)
         if (!locations[locIndex]) return 0;
@@ -310,6 +312,7 @@ function JusticeDuel() {
         const loc = locations[locIndex];
         const cards = boardSide[locIndex];
 
+        // Calculate base power with location effects
         cards.forEach(card => {
             let power = card.power;
 
@@ -317,51 +320,83 @@ function JusticeDuel() {
             if (loc.revealed && loc.id === 'l2') power += 1; // Metropolis +1
             if (loc.revealed && loc.id === 'l4') power -= 1; // Arkham -1
 
-            // Simple manual buff for Robin demo
-            if (card.name === 'Robin') power += 2;
+            // Robin: Self buff (+2 power)
+            if (card.ability === 'buff_self' && card.abilityVal) {
+                power += card.abilityVal;
+            }
 
             total += power;
         });
 
-        // Second Pass for Synergies (Batman style buffs)
-        cards.forEach(card => {
-            if (card.name === 'Batman') {
-                total += (cards.length - 1); // +1 for every OTHER card
-            }
-        });
+        // Batman: Buff other friendly cards (+1 power each)
+        const batmanCount = cards.filter(c => c.ability === 'buff_loc').length;
+        if (batmanCount > 0) {
+            const otherCardsCount = cards.length - batmanCount;
+            total += batmanCount * otherCardsCount; // Each Batman gives +1 to every other card
+        }
 
         return Math.max(0, total);
     };
 
+
+
     const handleEndTurn = () => {
         if (gameStatus !== 'playing') return;
 
-        // 1. AI Turn
-        // Simple AI: Play random affordable cards to random available slots
+        // 1. AI Turn - STRATEGIC PLAYING
         let aiEnergy = turn; // AI has same energy logic
         let tempAiHand = [...opponentHand];
         let tempAiBoard = { ...opponentBoard };
 
-        // Try to play cards until out of energy or space
-        // Sort AI hand by cost descending to play big cards first
-        tempAiHand.sort((a, b) => b.cost - a.cost);
+        // Evaluate each location's status
+        const evaluateLocation = (locIdx) => {
+            const playerPower = calculatePower(playerBoard, locIdx);
+            const aiPower = calculatePower(tempAiBoard, locIdx);
+            return {
+                playerPower,
+                aiPower,
+                diff: playerPower - aiPower, // Positive = player winning
+                isFull: tempAiBoard[locIdx].length >= MAX_CARDS_PER_LOCATION
+            };
+        };
+
+        // Sort cards by value (power/cost ratio), prioritize high-value cards
+        tempAiHand.sort((a, b) => (b.power / b.cost) - (a.power / a.cost));
 
         const cardsToPlay = [];
 
-        for (let i = tempAiHand.length - 1; i >= 0; i--) {
-            const c = tempAiHand[i];
-            if (c.cost <= aiEnergy) {
-                // Pick random valid location
-                const validLocs = [0, 1, 2].filter(idx => tempAiBoard[idx].length < MAX_CARDS_PER_LOCATION);
-                if (validLocs.length > 0) {
-                    const targetLoc = validLocs[Math.floor(Math.random() * validLocs.length)];
-                    tempAiBoard[targetLoc] = [...tempAiBoard[targetLoc], { ...c, revealed: false }]; // Hidden initially
-                    aiEnergy -= c.cost;
-                    tempAiHand.splice(i, 1); // Remove from hand
-                    cardsToPlay.push({ card: c, loc: targetLoc });
-                }
+        for (let i = 0; i < tempAiHand.length; i++) {
+            const card = tempAiHand[i];
+            if (card.cost > aiEnergy) continue; // Can't afford
+
+            // Find best location for this card
+            const locationScores = [0, 1, 2].map(idx => {
+                const eval = evaluateLocation(idx);
+                if (eval.isFull) return { idx, score: -999 }; // Can't play here
+
+                // Score = how much it helps AI win this location
+                // Prioritize: losing locations > tied > already winning
+                let score = 0;
+                if (eval.diff > 0) score = eval.diff + 10; // Player winning - try to contest
+                else if (eval.diff === 0) score = 5; // Tied - push advantage
+                else score = -eval.diff; // AI winning - maintain lead
+
+                return { idx, score };
+            });
+
+            // Pick best location
+            locationScores.sort((a, b) => b.score - a.score);
+            const bestLoc = locationScores[0];
+
+            if (bestLoc.score > -999) {
+                tempAiBoard[bestLoc.idx] = [...tempAiBoard[bestLoc.idx], { ...card, revealed: false }];
+                aiEnergy -= card.cost;
+                cardsToPlay.push({ card, loc: bestLoc.idx });
+                tempAiHand.splice(i, 1);
+                i--; // Adjust index after removal
             }
         }
+
 
         setOpponentBoard(tempAiBoard);
         setOpponentHand(tempAiHand);
