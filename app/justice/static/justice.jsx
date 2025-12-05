@@ -495,7 +495,7 @@ function JusticeDuel() {
                 {/* Error Message Toast */}
                 {errorMessage && (
                     <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg font-bold text-sm animate-in slide-in-from-top duration-300">
-                        <FAIcon icon="exclamation-triangle" size={16} className="inline mr-2" />
+                        <FAIcon icon="exclamation-circle" size={16} className="inline mr-2" />
                         {errorMessage}
                     </div>
                 )}
