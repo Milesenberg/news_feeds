@@ -87,9 +87,22 @@ const Card = ({ card, onClick, isSelected, isOpponent, mini = false }) => {
 
             {/* Art Placeholder */}
             <div className={`w-full ${mini ? 'h-8' : 'h-14'} bg-black/20 rounded mt-3 flex items-center justify-center overflow-hidden`}>
-                <span className={`${mini ? 'text-[8px]' : 'text-[10px]'} font-bold opacity-80 uppercase tracking-wider text-center px-1`}>
-                    {card.name.split(' ')[0]}
-                </span>
+                {card.image ? (
+                    <img 
+                        src={card.image} 
+                        alt={card.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                            console.error(`Failed to load image for ${card.name}:`, card.image);
+                            console.error('Error event:', e);
+                        }}
+                        onLoad={() => console.log(`✓ Loaded: ${card.name}`)}
+                    />
+                ) : (
+                    <span className={`${mini ? 'text-[8px]' : 'text-[10px]'} font-bold opacity-80 uppercase tracking-wider text-center px-1`}>
+                        {card.name.split(' ')[0]}
+                    </span>
+                )}
             </div>
 
             {/* Text */}
