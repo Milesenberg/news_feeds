@@ -353,12 +353,95 @@ const Typewriter = ({ text, speed = 20, onComplete, playSound }) => {
     return <span>{displayedText}</span>;
 };
 
+// --- Voice Synthesis Component ---
+
+const VoicePlayer = ({ text, characterId, enabled, onComplete, onPlayStateChange }) => {
+    const audioRef = useRef(new Audio());
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const lastPlayedRef = useRef(null);
+
+    // Stop audio when disabled or unmounted
+    useEffect(() => {
+        if (!enabled) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+            if (onPlayStateChange) onPlayStateChange(false);
+        }
+    }, [enabled, onPlayStateChange]);
+
+    useEffect(() => {
+        if (!enabled || !text) return;
+
+        // Prevent re-playing the same text/char combo immediately
+        const playKey = `${characterId}:${text.substring(0, 20)}`;
+        if (lastPlayedRef.current === playKey) return;
+
+        const playVoice = async () => {
+            setIsLoading(true);
+            setError(null);
+            if (onPlayStateChange) onPlayStateChange(true);
+
+            try {
+                const response = await fetch('/narrative/api/voice', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, character_id: characterId })
+                });
+
+                if (!response.ok) throw new Error('Voice generation failed');
+
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+
+                audioRef.current.src = url;
+                audioRef.current.play().catch(e => console.warn("Audio play blocked:", e));
+
+                lastPlayedRef.current = playKey;
+
+                audioRef.current.onended = () => {
+                    if (onComplete) onComplete();
+                    if (onPlayStateChange) onPlayStateChange(false);
+                    URL.revokeObjectURL(url);
+                };
+
+                audioRef.current.onerror = () => {
+                    console.error("Audio playback error");
+                    if (onPlayStateChange) onPlayStateChange(false);
+                };
+
+            } catch (err) {
+                console.error("Voice error:", err);
+                setError(err);
+                if (onPlayStateChange) onPlayStateChange(false);
+                // Fallback: mark complete so game doesn't hang
+                if (onComplete) onComplete();
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        playVoice();
+
+        return () => {
+            audioRef.current.pause();
+            // Don't revoke URL here immediately as it might cut off
+        };
+    }, [text, characterId, enabled, onComplete, onPlayStateChange]);
+
+    return null; // Invisible component
+};
+
 // --- Main Application ---
 
 function App() {
     const [currentSceneId, setCurrentSceneId] = useState('start');
     const [isTextFinished, setIsTextFinished] = useState(false);
     const [history, setHistory] = useState([]);
+
+    // Voice State
+    const [voiceEnabled, setVoiceEnabled] = useState(true);
+    const [isVoicePlaying, setIsVoicePlaying] = useState(false);
 
     const soundEngine = useRef(null);
 
@@ -385,6 +468,7 @@ function App() {
                     const img = new Image();
                     img.src = nextScene.bgImage;
                 }
+                // Optional: Preload voice here if we wanted to get fancy
             });
         }
     }, [currentScene]);
@@ -397,6 +481,11 @@ function App() {
         setCurrentSceneId(nextId);
     };
 
+    const toggleVoice = (e) => {
+        e.stopPropagation();
+        setVoiceEnabled(!voiceEnabled);
+    };
+
     useEffect(() => {
         if (currentScene.actionSlide) {
             soundEngine.current?.playSlide();
@@ -405,6 +494,16 @@ function App() {
 
     return (
         <div className="relative w-full h-screen overflow-hidden text-zinc-100 font-mono" onClick={ensureAudio}>
+
+            {/* Voice Player */}
+            <VoicePlayer
+                text={currentScene.text}
+                characterId={currentScene.character}
+                enabled={voiceEnabled}
+                // When voice finishes, nothing special needs to happen for now, 
+                // as text completion controls the choices.
+                onPlayStateChange={setIsVoicePlaying}
+            />
 
             {/* BACKGROUND LAYER */}
             <div className="absolute inset-0 z-0 transition-all duration-1000 ease-in-out">
@@ -434,7 +533,17 @@ function App() {
                         <FAIcon icon="terminal" size={18} />
                         <span className="text-sm tracking-widest font-bold hidden md:inline">CYBER_NARRATIVE_OS_v3.3</span>
                     </div>
-                    <div className="flex gap-4 text-xs md:text-sm">
+                    <div className="flex gap-4 text-xs md:text-sm items-center">
+                        {/* Voice Toggle */}
+                        <button
+                            onClick={toggleVoice}
+                            className={`flex items-center gap-1 transition-colors ${voiceEnabled ? 'text-cyan-400' : 'text-zinc-600'}`}
+                            title={voiceEnabled ? "Mute Voice" : "Enable Voice"}
+                        >
+                            <FAIcon icon={voiceEnabled ? "microphone" : "microphone-slash"} size={14} />
+                            <span className="hidden md:inline">{voiceEnabled ? "VOICE: ON" : "VOICE: OFF"}</span>
+                        </button>
+
                         <div className="flex items-center gap-1 text-green-400">
                             <FAIcon icon="shield-alt" size={14} />
                             <span className="hidden md:inline">SYNC: 98%</span>
@@ -443,9 +552,9 @@ function App() {
                             <FAIcon icon="map-marker-alt" size={14} />
                             <span>{currentScene.locationName}</span>
                         </div>
-                        <div className="flex items-center gap-1 text-zinc-500 animate-pulse">
-                            <FAIcon icon="volume-up" size={14} />
-                            <span className="text-[10px]">AUDIO_READY</span>
+                        <div className={`flex items-center gap-1 ${isVoicePlaying ? 'text-cyan-400 animate-pulse' : 'text-zinc-500'}`}>
+                            <FAIcon icon={isVoicePlaying ? "wave-square" : "volume-up"} size={14} />
+                            <span className="text-[10px]">{isVoicePlaying ? "TRANSMITTING..." : "AUDIO_READY"}</span>
                         </div>
                     </div>
                 </header>
@@ -497,7 +606,7 @@ function App() {
                                     text={currentScene.text}
                                     onComplete={handleTextComplete}
                                     speed={20}
-                                    playSound={playTypeSound}
+                                    playSound={voiceEnabled ? null : playTypeSound} // Disable type sound if voice is on
                                 />
                                 {isTextFinished && <span className="inline-block w-2 h-5 bg-cyan-400 ml-1 animate-pulse align-middle"></span>}
                             </div>

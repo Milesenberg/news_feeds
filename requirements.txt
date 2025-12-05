@@ -1,3 +1,6 @@
 Flask
 feedparser
 gunicorn
+elevenlabs
+python-dotenv
+requests
