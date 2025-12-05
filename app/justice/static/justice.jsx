@@ -206,6 +206,7 @@ function JusticeDuel() {
     const [playerDeck, setPlayerDeck] = useState([]);
     const [playerHand, setPlayerHand] = useState([]);
     const [selectedCardId, setSelectedCardId] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
 
     // Opponent State
     const [opponentDeck, setOpponentDeck] = useState([]);
@@ -257,11 +258,14 @@ function JusticeDuel() {
         if (gameStatus !== 'playing') return;
         if (selectedCardId === card.id) {
             setSelectedCardId(null); // Deselect
+            setErrorMessage(null);
         } else {
             if (card.cost <= energy) {
                 setSelectedCardId(card.id);
+                setErrorMessage(null);
             } else {
-                // Maybe show error toast "Not enough energy"
+                setErrorMessage(`Not enough energy! Need ${card.cost}, have ${energy}`);
+                setTimeout(() => setErrorMessage(null), 2000);
             }
         }
     };
@@ -285,7 +289,9 @@ function JusticeDuel() {
         if (location && location.revealed) {
             // Themyscira: Only cards costing 4+ can be played here
             if (location.id === 'l3' && card.cost < 4) {
-                console.warn(`${card.name} (cost ${card.cost}) cannot be played at ${location.name} - requires cost 4+`);
+                setErrorMessage(`${location.name} requires cards costing 4 or more!`);
+                setTimeout(() => setErrorMessage(null), 2000);
+                setSelectedCardId(null);
                 return; // Block the move
             }
         }
@@ -485,6 +491,14 @@ function JusticeDuel() {
 
             {/* Main Game Area */}
             <div className="flex-1 flex flex-col relative">
+
+                {/* Error Message Toast */}
+                {errorMessage && (
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg font-bold text-sm animate-in slide-in-from-top duration-300">
+                        <FAIcon icon="exclamation-triangle" size={16} className="inline mr-2" />
+                        {errorMessage}
+                    </div>
+                )}
 
                 {/* Victory/Defeat Overlay */}
                 {gameStatus === 'ended' && (
