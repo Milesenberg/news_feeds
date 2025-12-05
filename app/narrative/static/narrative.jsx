@@ -383,15 +383,28 @@ const VoicePlayer = ({ text, characterId, enabled, onComplete, onPlayStateChange
             if (onPlayStateChange) onPlayStateChange(true);
 
             try {
+                // Create abort controller for 3-second timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+
                 const response = await fetch('/narrative/api/voice', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text, character_id: characterId })
+                    body: JSON.stringify({ text, character_id: characterId }),
+                    signal: controller.signal
                 });
+
+                clearTimeout(timeoutId);
 
                 if (!response.ok) throw new Error('Voice generation failed');
 
                 const blob = await response.blob();
+
+                // Check if response is actually audio (not error JSON)
+                if (blob.size === 0 || blob.type.includes('json')) {
+                    throw new Error('Empty or invalid audio response');
+                }
+
                 const url = URL.createObjectURL(blob);
 
                 audioRef.current.src = url;
@@ -406,15 +419,21 @@ const VoicePlayer = ({ text, characterId, enabled, onComplete, onPlayStateChange
                 };
 
                 audioRef.current.onerror = () => {
-                    console.error("Audio playback error");
+                    console.warn("Audio playback error - continuing without voice");
                     if (onPlayStateChange) onPlayStateChange(false);
+                    if (onComplete) onComplete();
                 };
 
             } catch (err) {
-                console.error("Voice error:", err);
+                // Silent fallback - just log and continue
+                if (err.name === 'AbortError') {
+                    console.warn("Voice generation timeout - continuing without voice");
+                } else {
+                    console.warn("Voice error (continuing silently):", err.message);
+                }
                 setError(err);
                 if (onPlayStateChange) onPlayStateChange(false);
-                // Fallback: mark complete so game doesn't hang
+                // Mark complete immediately - text will show without voice
                 if (onComplete) onComplete();
             } finally {
                 setIsLoading(false);
