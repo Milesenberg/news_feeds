@@ -1,6 +1,7 @@
 Flask
 feedparser
 gunicorn
-elevenlabs
+elevenlabs==1.9.0
 python-dotenv
 requests
+openai
