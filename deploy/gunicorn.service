@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve sovereign_web
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/var/www/sovereign_web
+Environment="PATH=/var/www/sovereign_web/.venv/bin"
+ExecStart=/var/www/sovereign_web/.venv/bin/gunicorn --workers 3 --bind unix:sovereign_web.sock -m 007 run:app
+
+[Install]
+WantedBy=multi-user.target

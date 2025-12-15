@@ -36,5 +36,8 @@ def create_app():
     from app.dnd.routes import dnd
     app.register_blueprint(dnd, url_prefix='/dnd')
 
+    from app.nhs_capitalism.routes import nhs_capitalism
+    app.register_blueprint(nhs_capitalism, url_prefix='/nhs_capitalism')
+
     return app
 

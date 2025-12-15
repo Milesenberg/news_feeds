@@ -1,36 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QFTL8TJLDJ"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+{% block title %}Big Beat Sequencer v2.0{% endblock %}
 
-      gtag('config', 'G-QFTL8TJLDJ');
-    </script>
+{% block head_extra %}
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+    /* Custom scrollbar for the grid */
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Big Beat Sequencer v2.0</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        /* Custom scrollbar for the grid */
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
+{% endblock %}
 
-        .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-    </style>
-</head>
-
-<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
-
+{% block content %}
+<div class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
     <div class="mb-6 text-center">
         <h1
             class="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 transform -skew-x-12">
@@ -201,11 +189,12 @@
             <span>STEREO OUTPUT • 44.1KHZ • 32 STEPS</span>
         </div>
     </div>
+</div>
+{% endblock %}
 
-    <script src="{{ url_for('sequencer.static', filename='sequencer.js') }}"></script>
-    <script>
-        lucide.createIcons();
-    </script>
-</body>
-
-</html>
+{% block scripts %}
+<script src="{{ url_for('sequencer.static', filename='sequencer.js') }}"></script>
+<script>
+    lucide.createIcons();
+</script>
+{% endblock %}

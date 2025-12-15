@@ -11,27 +11,27 @@ const MAX_TURNS = 6;
 const MAX_CARDS_PER_LOCATION = 4;
 
 const CARDS_DB = [
-    { id: 'c1', name: 'The Flash', cost: 1, power: 2, color: 'bg-red-600', desc: 'Fast start.', image: '/justice/static/images/flash_portrait_card_1764961461610.png' },
-    { id: 'c2', name: 'Robin', cost: 1, power: 1, color: 'bg-green-600', ability: 'buff_self', abilityVal: 2, desc: 'On Reveal: +2 Power.', image: '/justice/static/images/robin_portrait_card_1764961477327.png' },
-    { id: 'c3', name: 'Harley Quinn', cost: 2, power: 3, color: 'bg-pink-600', desc: 'Chaos agent.', image: '/justice/static/images/harley_quinn_portrait_1764961494644.png' },
-    { id: 'c13', name: 'Catwoman', cost: 2, power: 3, color: 'bg-purple-800', desc: 'Feline thief.', image: '/justice/static/images/catwoman_portrait_card_1764965955979.png' },
-    { id: 'c4', name: 'Cyborg', cost: 2, power: 4, color: 'bg-gray-500', desc: 'Solid tech defence.', image: '/justice/static/images/cyborg_portrait_card_1764961510189.png' },
-    { id: 'c5', name: 'Batman', cost: 3, power: 4, color: 'bg-slate-800', ability: 'buff_loc', abilityVal: 1, desc: 'On Reveal: +1 Power to allies here.', image: '/justice/static/images/batman_portrait_card_1764961208368.png' },
-    { id: 'c6', name: 'Green Lantern', cost: 3, power: 5, color: 'bg-green-500', desc: 'Willpower construct.', image: '/justice/static/images/green_lantern_portrait_1764961524844.png' },
-    { id: 'c7', name: 'Aquaman', cost: 4, power: 6, color: 'bg-orange-500', desc: 'King of Atlantis.', image: '/justice/static/images/aquaman_portrait_card_1764961541671.png' },
-    { id: 'c8', name: 'Wonder Woman', cost: 4, power: 7, color: 'bg-red-700', desc: 'Amazonian strength.', image: '/justice/static/images/wonder_woman_portrait_v2_1764961408971.png' },
-    { id: 'c9', name: 'The Joker', cost: 5, power: 3, color: 'bg-purple-600', ability: 'debuff_opp', abilityVal: -1, desc: 'On Reveal: -1 Power to enemies here.', image: '/justice/static/images/joker_portrait_card_1764961557070.png' },
-    { id: 'c10', name: 'Superman', cost: 6, power: 12, color: 'bg-blue-600', desc: 'Man of Steel.', image: '/justice/static/images/superman_portrait_card_1764961223519.png' },
-    { id: 'c11', name: 'Lex Luthor', cost: 5, power: 8, color: 'bg-green-800', desc: 'Genius intellect.', image: '/justice/static/images/lex_luthor_portrait_1764961571316.png' },
-    { id: 'c12', name: 'Darkseid', cost: 6, power: 11, color: 'bg-gray-900', ability: 'destroy', desc: 'On Reveal: Sacrifice ally for +3 Power.', image: '/justice/static/images/darkseid_portrait_card_1764961586925.png' },
+    { id: 'c1', name: 'The Sprinter', cost: 1, power: 2, color: 'bg-red-600', desc: 'Lightning fast.', image: '/justice/static/images/hero_duel_sprinter_1765820610230.png' },
+    { id: 'c2', name: 'The Sidekick', cost: 1, power: 1, color: 'bg-green-600', ability: 'buff_self', abilityVal: 2, desc: 'On Reveal: +2 Power.', image: '/justice/static/images/hero_duel_sidekick_1765820641385.png' },
+    { id: 'c3', name: 'The Jester', cost: 2, power: 3, color: 'bg-pink-600', desc: 'Unpredictable chaos.', image: '/justice/static/images/hero_duel_jester_1765820670659.png' },
+    { id: 'c13', name: 'The Burglar', cost: 2, power: 3, color: 'bg-purple-800', desc: 'Stealthy thief.', image: '/justice/static/images/hero_duel_burglar_1765821392051.png' },
+    { id: 'c4', name: 'The Android', cost: 2, power: 4, color: 'bg-gray-500', desc: 'Cybernetic defense.', image: '/justice/static/images/hero_duel_android_1765821412816.png' },
+    { id: 'c5', name: 'The Vigilante', cost: 3, power: 4, color: 'bg-slate-800', ability: 'buff_loc', abilityVal: 1, desc: 'On Reveal: +1 Power to allies here.', image: '/justice/static/images/hero_duel_vigilante_1765821429652.png' },
+    { id: 'c6', name: 'The Warden', cost: 3, power: 5, color: 'bg-green-500', desc: 'Construct creator.', image: '/justice/static/images/hero_duel_warden_1765821675808.png' },
+    { id: 'c7', name: 'The Sea King', cost: 4, power: 6, color: 'bg-orange-500', desc: 'Ruler of the deep.', image: '/justice/static/images/hero_duel_seaking_1765821692608.png' },
+    { id: 'c8', name: 'The Amazon', cost: 4, power: 7, color: 'bg-red-700', desc: 'Warrior strength.', image: '/justice/static/images/hero_duel_amazon_1765821715278.png' },
+    { id: 'c9', name: 'The Madman', cost: 5, power: 3, color: 'bg-purple-600', ability: 'debuff_opp', abilityVal: -1, desc: 'On Reveal: -1 Power to enemies here.', image: '/justice/static/images/hero_duel_madman_1765823314724.png' },
+    { id: 'c10', name: 'The Paragon', cost: 6, power: 12, color: 'bg-blue-600', desc: 'Ultimate power.', image: '/justice/static/images/hero_duel_paragon_1765823333905.png' },
+    { id: 'c11', name: 'The Mastermind', cost: 5, power: 8, color: 'bg-green-800', desc: 'Genius intellect.', image: '/justice/static/images/hero_duel_mastermind_1765823351393.png' },
+    { id: 'c12', name: 'The Tyrant', cost: 6, power: 11, color: 'bg-gray-900', ability: 'destroy', desc: 'On Reveal: Sacrifice ally for +3 Power.', image: '/justice/static/images/hero_duel_tyrant_1765823370375.png' },
 ];
 
 const LOCATIONS_DB = [
-    { id: 'l1', name: 'Gotham City', color: 'from-slate-800 to-slate-900', effect: 'No special effect.', bgImage: '/justice/static/images/gotham_city_background_1764963558076.png' },
-    { id: 'l2', name: 'Metropolis', color: 'from-blue-400 to-blue-600', effect: 'Cards here get +1 Power.', bgImage: '/justice/static/images/metropolis_background_1764963572865.png' },
-    { id: 'l3', name: 'Themyscira', color: 'from-yellow-600 to-red-600', effect: 'Only cards costing 4+ can be played here.', bgImage: '/justice/static/images/themyscira_background_1764963587114.png' },
-    { id: 'l4', name: 'Arkham Asylum', color: 'from-green-900 to-slate-900', effect: 'Cards here have -1 Power.', bgImage: '/justice/static/images/arkham_asylum_background_1764963601763.png' },
-    { id: 'l5', name: 'Fortress of Solitude', color: 'from-cyan-100 to-blue-200', effect: 'Turn 5: Cards here swap sides (Not implemented).', bgImage: '/justice/static/images/fortress_solitude_background_1764963618102.png' },
+    { id: 'l1', name: 'Shadow City', color: 'from-slate-800 to-slate-900', effect: 'No special effect.', bgImage: '/justice/static/images/hero_duel_shadow_city_1765823555133.png' },
+    { id: 'l2', name: 'Solar City', color: 'from-blue-400 to-blue-600', effect: 'Cards here get +1 Power.', bgImage: '/justice/static/images/hero_duel_solar_city_1765823571520.png' },
+    { id: 'l3', name: 'Warrior\'s Isle', color: 'from-yellow-600 to-red-600', effect: 'Only cards costing 4+ can be played here.', bgImage: '/justice/static/images/hero_duel_warriors_isle_1765823587112.png' },
+    { id: 'l4', name: 'The Sanatorium', color: 'from-green-900 to-slate-900', effect: 'Cards here have -1 Power.', bgImage: '/justice/static/images/hero_duel_sanatorium_1765823603358.png' },
+    { id: 'l5', name: 'Frozen Citadel', color: 'from-cyan-100 to-blue-200', effect: 'Turn 5: Cards here swap sides (Not implemented).', bgImage: '/justice/static/images/hero_duel_frozen_citadel_1765823619914.png' },
 ];
 
 // --- Helper Functions ---
@@ -93,6 +93,7 @@ const Card = ({ card, onClick, isSelected, isOpponent, mini = false }) => {
                         src={card.image}
                         alt={card.name}
                         className="w-full h-full object-cover"
+                        onError={(e) => e.target.style.display = 'none'}
                     />
                 ) : (
                     <span className={`${mini ? 'text-[8px]' : 'text-[10px]'} font-bold opacity-80 uppercase tracking-wider text-center px-1`}>
@@ -114,22 +115,16 @@ const Card = ({ card, onClick, isSelected, isOpponent, mini = false }) => {
     );
 };
 
-const Location = ({ data, index, playerCards, opponentCards, onSelect, activeTurn, totalPowerPlayer, totalPowerOpponent }) => {
-    const isWinning = totalPowerPlayer > totalPowerOpponent;
-    const isLosing = totalPowerPlayer < totalPowerOpponent;
-    const isTied = totalPowerPlayer === totalPowerOpponent;
+const Location = ({ data, index, playerCards, opponentCards, onSelect, activeTurn }) => {
+    // Calculate total power at this location
+    const totalPowerPlayer = playerCards.reduce((sum, c) => sum + c.power, 0);
+    const totalPowerOpponent = opponentCards.reduce((sum, c) => sum + c.power, 0);
 
-    // Calculate specific status style
-    let borderClass = "border-slate-600";
-    let bgStatus = "bg-slate-700";
-
-    if (totalPowerPlayer > totalPowerOpponent) {
-        borderClass = "border-yellow-500";
-        bgStatus = "bg-yellow-600";
-    } else if (totalPowerPlayer < totalPowerOpponent) {
-        borderClass = "border-red-500";
-        bgStatus = "bg-red-600";
-    }
+    // Determine border color based on winning status
+    let borderClass = 'border-slate-700';
+    if (totalPowerPlayer > totalPowerOpponent) borderClass = 'border-blue-500';
+    else if (totalPowerOpponent > totalPowerPlayer) borderClass = 'border-red-500';
+    else if (totalPowerPlayer > 0 && totalPowerPlayer === totalPowerOpponent) borderClass = 'border-yellow-500'; // Tie
 
     // Guard against undefined data (though parent should prevent this)
     if (!data) return <div className="flex-1 bg-slate-900 rounded-xl animate-pulse"></div>;
@@ -168,9 +163,9 @@ const Location = ({ data, index, playerCards, opponentCards, onSelect, activeTur
                 <h3 className="text-white font-bold text-xs uppercase tracking-widest shadow-black drop-shadow-md text-center px-1">
                     {data.revealed ? data.name : "Unrevealed"}
                 </h3>
-                {data.revealed && (
-                    <p className="text-[9px] text-gray-300 text-center px-2 leading-none mt-1 max-w-[120px]">{data.effect}</p>
-                )}
+                <p className="text-[9px] text-slate-300 text-center px-2 leading-tight">
+                    {data.revealed ? data.effect : "???"}
+                </p>
             </div>
 
             {/* Player Side (Interactive Zone) */}
@@ -186,7 +181,7 @@ const Location = ({ data, index, playerCards, opponentCards, onSelect, activeTur
                         <div key={`empty-${i}`} className="w-12 h-16 rounded border border-white/10 bg-white/5 mx-auto"></div>
                     ))}
                 </div>
-                <div className={`w-8 h-8 rounded-full text-white font-bold flex items-center justify-center border-2 shadow-md ${bgStatus} border-white`}>
+                <div className="w-8 h-8 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center border-2 border-slate-400 shadow-md transform translate-y-2">
                     {totalPowerPlayer}
                 </div>
             </div>
@@ -225,32 +220,32 @@ function JusticeDuel() {
     }, []);
 
     const startNewGame = () => {
-        // 1. Setup Decks
-        const pDeck = getRandomDeck();
-        const oDeck = getRandomDeck();
-
-        // 2. Draw initial hands (3 cards)
-        const pHand = pDeck.splice(0, 3);
-        const oHand = oDeck.splice(0, 3);
-
-        // 3. Setup Locations (Pick 3 random unique)
-        const allLocs = shuffle([...LOCATIONS_DB]);
-        const gameLocs = allLocs.slice(0, 3).map((l, i) => ({
-            ...l,
-            revealed: i === 0 // Reveal first location immediately, others later (Snap style: 1, 2, 3)
-        }));
-
-        setPlayerDeck(pDeck);
-        setPlayerHand(pHand);
-        setOpponentDeck(oDeck);
-        setOpponentHand(oHand);
-        setLocations(gameLocs);
-        setPlayerBoard({ 0: [], 1: [], 2: [] });
-        setOpponentBoard({ 0: [], 1: [], 2: [] });
+        // Reset State
         setTurn(1);
         setEnergy(1);
         setGameStatus('playing');
+        setPlayerBoard({ 0: [], 1: [], 2: [] });
+        setOpponentBoard({ 0: [], 1: [], 2: [] });
         setSelectedCardId(null);
+
+        // Shuffle Decks
+        const pDeck = [...CARDS_DB].sort(() => Math.random() - 0.5);
+        const oDeck = [...CARDS_DB].sort(() => Math.random() - 0.5);
+
+        // Deal Initial Hands (3 cards)
+        setPlayerHand(pDeck.splice(0, 3));
+        setPlayerDeck(pDeck);
+
+        setOpponentHand(oDeck.splice(0, 3));
+        setOpponentDeck(oDeck);
+
+        // Setup Locations (Pick 3 random unique)
+        const locs = [...LOCATIONS_DB].sort(() => Math.random() - 0.5).slice(0, 3);
+        // Set initial revealed state
+        locs[0].revealed = true; // First one revealed
+        locs[1].revealed = false;
+        locs[2].revealed = false;
+        setLocations(locs);
     };
 
     // Turn Logic
@@ -287,7 +282,7 @@ function JusticeDuel() {
         // Location-specific restrictions
         const location = locations[locIndex];
         if (location && location.revealed) {
-            // Themyscira: Only cards costing 4+ can be played here
+            // Warrior's Isle (was l3): Only cards costing 4+ can be played here
             if (location.id === 'l3' && card.cost < 4) {
                 setErrorMessage(`${location.name} requires cards costing 4 or more!`);
                 setTimeout(() => setErrorMessage(null), 2000);
@@ -323,10 +318,10 @@ function JusticeDuel() {
             let power = card.power;
 
             // Location Effects
-            if (loc.revealed && loc.id === 'l2') power += 1; // Metropolis +1
-            if (loc.revealed && loc.id === 'l4') power -= 1; // Arkham -1
+            if (loc.revealed && loc.id === 'l2') power += 1; // Solar City +1
+            if (loc.revealed && loc.id === 'l4') power -= 1; // Sanatorium -1
 
-            // Robin: Self buff (+2 power)
+            // The Sidekick: Self buff (+2 power)
             if (card.ability === 'buff_self' && card.abilityVal) {
                 power += card.abilityVal;
             }
@@ -334,11 +329,11 @@ function JusticeDuel() {
             total += power;
         });
 
-        // Batman: Buff other friendly cards (+1 power each)
-        const batmanCount = cards.filter(c => c.ability === 'buff_loc').length;
-        if (batmanCount > 0) {
-            const otherCardsCount = cards.length - batmanCount;
-            total += batmanCount * otherCardsCount; // Each Batman gives +1 to every other card
+        // The Vigilante: Buff other friendly cards (+1 power each)
+        const vigilanteCount = cards.filter(c => c.ability === 'buff_loc').length;
+        if (vigilanteCount > 0) {
+            const otherCardsCount = cards.length - vigilanteCount;
+            total += vigilanteCount * otherCardsCount; // Each Vigilante gives +1 to every other card
         }
 
         return Math.max(0, total);
@@ -407,41 +402,36 @@ function JusticeDuel() {
         setOpponentBoard(tempAiBoard);
         setOpponentHand(tempAiHand);
 
-        // 2. Reveal AI Cards
-        const revealedBoard = { ...tempAiBoard };
-        [0, 1, 2].forEach(idx => {
-            revealedBoard[idx] = revealedBoard[idx].map(c => ({ ...c, revealed: true }));
-        });
-        setOpponentBoard(revealedBoard);
+        // 2. Resolve Turn
+        // Reveal cards? (Already revealed for player, simple logic for now)
 
-        // 3. Reveal Locations Logic
+        // 3. Reveal Location?
+        const newTurn = turn + 1;
         const newLocs = [...locations];
-        if (turn === 1 && newLocs[1]) newLocs[1].revealed = true;
-        if (turn === 2 && newLocs[2]) newLocs[2].revealed = true;
+        if (newTurn === 2) newLocs[1].revealed = true;
+        if (newTurn === 3) newLocs[2].revealed = true;
         setLocations(newLocs);
 
-        // 4. Check End Game
-        if (turn >= MAX_TURNS) {
+        // 4. Update Turn State
+        if (newTurn > MAX_TURNS) {
             setGameStatus('ended');
-            return;
-        }
+        } else {
+            setTurn(newTurn);
+            setEnergy(newTurn); // Energy = Turn Number
 
-        // 5. Next Turn Setup
-        const nextTurn = turn + 1;
-        setTurn(nextTurn);
-        setEnergy(nextTurn); // Energy refills to Turn #
+            // Draw Cards
+            const newPlayerDeck = [...playerDeck];
+            const newPlayerHand = [...playerHand]; // Use current playerHand
+            if (newPlayerDeck.length > 0) newPlayerHand.push(newPlayerDeck.shift());
 
-        // Draw Card Player
-        if (playerDeck.length > 0) {
-            const newCard = playerDeck[0];
-            setPlayerHand(prev => [...prev, newCard]);
-            setPlayerDeck(prev => prev.slice(1));
-        }
-        // Draw Card Opponent
-        if (opponentDeck.length > 0) {
-            const newCard = opponentDeck[0];
-            setOpponentHand(prev => [...prev, newCard]);
-            setOpponentDeck(prev => prev.slice(1));
+            const newOpponentDeck = [...opponentDeck];
+            const newOpponentHand = [...tempAiHand]; // Use the AI hand after playing cards
+            if (newOpponentDeck.length > 0) newOpponentHand.push(newOpponentDeck.shift());
+
+            setPlayerDeck(newPlayerDeck);
+            setPlayerHand(newPlayerHand);
+            setOpponentDeck(newOpponentDeck);
+            setOpponentHand(newOpponentHand);
         }
     };
 
@@ -482,9 +472,9 @@ function JusticeDuel() {
                         </div>
                     </div>
                 </div>
-                <div className="text-center">
-                    <h1 className="text-lg font-black tracking-wider text-yellow-500 italic uppercase">Justice Duel</h1>
-                    <div className="text-[10px] text-slate-400 font-bold">TURN {turn}/{MAX_TURNS}</div>
+                <div className="flex flex-col items-center">
+                    <h1 className="text-base font-black italic tracking-widest text-yellow-500 shadow-yellow-500/20 drop-shadow-sm uppercase">HERO DUEL</h1>
+                    <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded-full text-slate-400 font-bold">TURN {turn}/{MAX_TURNS}</span>
                 </div>
                 <div className="w-8"></div> {/* Spacer */}
             </div>

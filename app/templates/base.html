@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QFTL8TJLDJ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-QFTL8TJLDJ');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Milesenberg Digital{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+
+    {% block head_extra %}{% endblock %}
+</head>
+
+<body class="bg-slate-950 text-slate-300 min-h-screen font-sans flex flex-col">
+
+    <!-- Global Navigation -->
+    <nav class="bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 sticky top-0 z-[100000]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo / Home Link -->
+                <div class="flex-shrink-0">
+                    <a href="{{ url_for('main.index') }}" class="flex items-center gap-3 group">
+                        <div
+                            class="w-8 h-8 bg-cyan-900/30 rounded-lg flex items-center justify-center text-cyan-400 border border-cyan-500/30 group-hover:border-cyan-400 transition-colors">
+                            <i class="fas fa-cube"></i>
+                        </div>
+                        <span class="font-bold text-white tracking-tight group-hover:text-cyan-400 transition-colors">
+                            MILESENBERG <span class="text-cyan-500">DIGITAL</span>
+                        </span>
+                    </a>
+                </div>
+
+                <!-- Right Side Links -->
+                <div class="block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="{{ url_for('main.index') }}"
+                            class="{{ 'text-cyan-400' if request.endpoint == 'main.index' else 'text-slate-300' }} hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            <i class="fas fa-home mr-2"></i>Home
+                        </a>
+
+                        <!-- Flat Links -->
+                        <a href="{{ url_for('nhs_capitalism.index') }}"
+                            class="{{ 'text-cyan-400' if request.endpoint == 'nhs_capitalism.index' else 'text-slate-300' }} hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"><i
+                                class="fas fa-briefcase mr-1"></i>NHS</a>
+                        <a href="{{ url_for('narrative.index') }}"
+                            class="{{ 'text-cyan-400' if request.endpoint == 'narrative.index' else 'text-slate-300' }} hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"><i
+                                class="fas fa-gamepad mr-1"></i>Cyberpunk</a>
+                        <a href="{{ url_for('sequencer.index') }}"
+                            class="{{ 'text-cyan-400' if request.endpoint == 'sequencer.index' else 'text-slate-300' }} hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"><i
+                                class="fas fa-music mr-1"></i>Sequencer</a>
+                        <a href="{{ url_for('time.index') }}"
+                            class="{{ 'text-cyan-400' if request.endpoint == 'time.index' else 'text-slate-300' }} hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"><i
+                                class="fas fa-hourglass-half mr-1"></i>Time</a>
+                        <a href="{{ url_for('news.index') }}"
+                            class="{{ 'text-cyan-400' if request.endpoint == 'news.index' else 'text-slate-300' }} hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"><i
+                                class="fas fa-newspaper mr-1"></i>News</a>
+                        <a href="{{ url_for('picard.index') }}"
+                            class="{{ 'text-cyan-400' if request.endpoint == 'picard.index' else 'text-slate-300' }} hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"><i
+                                class="fas fa-images mr-1"></i>Trek</a>
+                        <a href="{{ url_for('dnd.index') }}"
+                            class="{{ 'text-cyan-400' if request.endpoint == 'dnd.index' else 'text-slate-300' }} hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"><i
+                                class="fas fa-dice-d20 mr-1"></i>D&D</a>
+                        <a href="{{ url_for('waifu.index') }}"
+                            class="{{ 'text-cyan-400' if request.endpoint == 'waifu.index' else 'text-slate-300' }} hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"><i
+                                class="fas fa-magic mr-1"></i>Anime</a>
+                        <a href="{{ url_for('justice.index') }}"
+                            class="{{ 'text-cyan-400' if request.endpoint == 'justice.index' else 'text-slate-300' }} hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"><i
+                                class="fas fa-gavel mr-1"></i>Justice</a>
+                    </div>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="-mr-2 flex md:hidden">
+                    <a href="{{ url_for('main.index') }}"
+                        class="bg-slate-800 inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white">
+                        <span class="sr-only">Open main menu</span>
+                        <i class="fas fa-home"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex-grow">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Global Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 mt-auto">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
+            <div class="mt-8 md:mt-0 md:order-1">
+                <p class="text-center text-base text-slate-500 font-mono text-sm">
+                    &copy; 2025 Milesenberg Digital. All systems nominal.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

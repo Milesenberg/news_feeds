@@ -1,26 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QFTL8TJLDJ"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+{% block title %}Anime Character Creator{% endblock %}
 
-      gtag('config', 'G-QFTL8TJLDJ');
-    </script>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Character Creator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-
-<body class="bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 min-h-screen font-sans overflow-x-hidden">
-
-    <div class="flex items-center justify-center min-h-screen p-4">
+{% block content %}
+<div class="bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 min-h-screen font-sans overflow-x-hidden">
+    <div class="flex items-center justify-center min-h-[calc(100vh-64px)] p-4">
         <div
             class="max-w-6xl w-full bg-slate-800/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-slate-700 overflow-hidden flex flex-col md:flex-row">
 
@@ -100,8 +84,10 @@
             </div>
         </div>
     </div>
-    <script src="{{ url_for('waifu.static', filename='data.js') }}"></script>
-    <script src="{{ url_for('waifu.static', filename='waifu.js') }}"></script>
-</body>
+</div>
+{% endblock %}
 
-</html>
+{% block scripts %}
+<script src="{{ url_for('waifu.static', filename='data.js') }}"></script>
+<script src="{{ url_for('waifu.static', filename='waifu.js') }}"></script>
+{% endblock %}

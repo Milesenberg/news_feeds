@@ -1,68 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QFTL8TJLDJ"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+{% block title %}Milesenberg's Headlines{% endblock %}
 
-      gtag('config', 'G-QFTL8TJLDJ');
-    </script>
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('news.static', filename='style.css') }}">
+{% endblock %}
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Milesenberg's Headlines</title>
-    <link rel="stylesheet" href="{{ url_for('news.static', filename='style.css') }}">
-</head>
+{% block content %}
+<div id="headlines-container" class="container p-6">
+    <!-- Headlines will be injected here -->
+</div>
+{% endblock %}
 
-<body>
-    <div id="headlines-container" class="container">
-        <!-- Headlines will be injected here -->
-    </div>
+{% block scripts %}
+<script>
+    fetch("{{ url_for('news.headlines_json') }}")
+        .then(response => response.json())
+        .then(headlines => {
+            const container = document.getElementById('headlines-container');
+            container.innerHTML = ''; // Clear any loading message
+            headlines.forEach(headline => {
+                const headlineDiv = document.createElement('div');
+                headlineDiv.classList.add('headline');
 
-    <script>
-        fetch("{{ url_for('news.headlines_json') }}")
-            .then(response => response.json())
-            .then(headlines => {
-                const container = document.getElementById('headlines-container');
-                container.innerHTML = ''; // Clear any loading message
-                headlines.forEach(headline => {
-                    const headlineDiv = document.createElement('div');
-                    headlineDiv.classList.add('headline');
+                // Use the color data to set the class for the outlet name
+                const outletSpan = document.createElement('span');
+                outletSpan.classList.add('outlet', headline.color);
+                outletSpan.textContent = headline.outlet;
 
-                    // Use the color data to set the class for the outlet name
-                    const outletSpan = document.createElement('span');
-                    outletSpan.classList.add('outlet', headline.color);
-                    outletSpan.textContent = headline.outlet;
+                const titleLink = document.createElement('a');
+                titleLink.href = headline.link;
+                titleLink.textContent = headline.title;
+                titleLink.target = "_blank";
+                titleLink.rel = "noopener noreferrer";
 
-                    const titleLink = document.createElement('a');
-                    titleLink.href = headline.link;
-                    titleLink.textContent = headline.title;
-                    titleLink.target = "_blank";
-                    titleLink.rel = "noopener noreferrer";
+                const titleHeading = document.createElement('h2');
+                titleHeading.appendChild(outletSpan);
+                titleHeading.appendChild(titleLink);
 
-                    const titleHeading = document.createElement('h2');
-                    titleHeading.appendChild(outletSpan);
-                    titleHeading.appendChild(titleLink);
+                const summaryPara = document.createElement('p');
+                summaryPara.textContent = headline.summary;
 
-                    const summaryPara = document.createElement('p');
-                    summaryPara.textContent = headline.summary;
+                const publishedPara = document.createElement('p');
+                publishedPara.classList.add('published-date');
+                publishedPara.textContent = headline.published_formatted;
 
-                    const publishedPara = document.createElement('p');
-                    publishedPara.classList.add('published-date');
-                    publishedPara.textContent = headline.published_formatted;
+                headlineDiv.appendChild(titleHeading);
+                headlineDiv.appendChild(summaryPara);
+                headlineDiv.appendChild(publishedPara);
 
-                    headlineDiv.appendChild(titleHeading);
-                    headlineDiv.appendChild(summaryPara);
-                    headlineDiv.appendChild(publishedPara);
-
-                    container.appendChild(headlineDiv);
-                });
-            })
-            .catch(error => console.error('Error fetching headlines:', error));
-    </script>
-</body>
-
-</html>
+                container.appendChild(headlineDiv);
+            });
+        })
+        .catch(error => console.error('Error fetching headlines:', error));
+</script>
+{% endblock %}

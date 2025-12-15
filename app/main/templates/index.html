@@ -1,28 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QFTL8TJLDJ"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+{% block title %}Milesenberg Digital{% endblock %}
 
-      gtag('config', 'G-QFTL8TJLDJ');
-    </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Milesenberg Digital</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-
-<body class="bg-slate-950 text-slate-300 min-h-screen flex items-center justify-center p-6 font-sans">
-
+{% block content %}
+<div class="flex items-center justify-center p-6 font-sans">
     <div class="max-w-5xl w-full">
 
         <!-- Header -->
-        <div class="text-center mb-12">
+        <div class="text-center mb-12 mt-12">
             <h1 class="text-4xl md:text-6xl font-black tracking-tight text-white mb-4">
                 MILESENBERG <span class="text-cyan-500">DIGITAL</span>
             </h1>
@@ -30,31 +15,55 @@
         </div>
 
         <!-- Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
 
-            <!-- Card 1: News -->
+            <!-- Card 1: NHS Capitalism -->
             <div
-                class="bg-slate-900 border border-slate-800 rounded-xl p-8 hover:border-blue-500 transition-all group relative overflow-hidden">
+                class="bg-slate-900 border border-slate-800 rounded-xl p-8 hover:border-blue-600 transition-all group relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <i class="fas fa-globe fa-6x text-blue-500"></i>
+                    <i class="fas fa-hospital-symbol fa-6x text-blue-600"></i>
                 </div>
                 <div class="relative z-10">
                     <div
-                        class="w-12 h-12 bg-blue-900/30 rounded-lg flex items-center justify-center mb-6 text-blue-400 border border-blue-500/30">
-                        <i class="fas fa-newspaper text-xl"></i>
+                        class="w-12 h-12 bg-blue-900/30 rounded-lg flex items-center justify-center mb-6 text-blue-500 border border-blue-600/30">
+                        <i class="fas fa-notes-medical text-xl"></i>
                     </div>
-                    <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">News
-                        Aggregator</h2>
-                    <p class="text-slate-400 mb-8 h-12">Real-time headlines and global updates from multiple sources.
+                    <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-blue-500 transition-colors">
+                        NHS Capitalism
+                    </h2>
+                    <p class="text-slate-400 mb-8 h-12">Interactive dashboard exploring the privatization of healthcare.
                     </p>
-                    <a href="{{ url_for('news.index') }}"
-                        class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-blue-400 hover:text-blue-300 transition-colors">
+                    <a href="{{ url_for('nhs_capitalism.index') }}"
+                        class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-blue-500 hover:text-blue-400 transition-colors">
+                        Launch Dashboard <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 2: Narrative Game -->
+            <div
+                class="bg-slate-900 border border-slate-800 rounded-xl p-8 hover:border-emerald-500 transition-all group relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fas fa-book-open fa-6x text-emerald-500"></i>
+                </div>
+                <div class="relative z-10">
+                    <div
+                        class="w-12 h-12 bg-emerald-900/30 rounded-lg flex items-center justify-center mb-6 text-emerald-400 border border-emerald-500/30">
+                        <i class="fas fa-terminal text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
+                        Cyberpunk Narrative
+                    </h2>
+                    <p class="text-slate-400 mb-8 h-12">Interactive story with choices and consequences in a neon-soaked
+                        future.</p>
+                    <a href="{{ url_for('narrative.index') }}"
+                        class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-emerald-400 hover:text-emerald-300 transition-colors">
                         Launch App <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
             </div>
 
-            <!-- Card 2: Sequencer -->
+            <!-- Card 3: Sequencer -->
             <div
                 class="bg-slate-900 border border-slate-800 rounded-xl p-8 hover:border-pink-500 transition-all group relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -70,27 +79,6 @@
                     <p class="text-slate-400 mb-8 h-12">Analogue-style drum machine and beat production tool.</p>
                     <a href="{{ url_for('sequencer.index') }}"
                         class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-pink-400 hover:text-pink-300 transition-colors">
-                        Launch App <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Card 3: Anime Character Creator -->
-            <div
-                class="bg-slate-900 border border-slate-800 rounded-xl p-8 hover:border-purple-500 transition-all group relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <i class="fas fa-heart fa-6x text-purple-500"></i>
-                </div>
-                <div class="relative z-10">
-                    <div
-                        class="w-12 h-12 bg-purple-900/30 rounded-lg flex items-center justify-center mb-6 text-purple-400 border border-purple-500/30">
-                        <i class="fas fa-magic text-xl"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors">Anime
-                        Character Creator</h2>
-                    <p class="text-slate-400 mb-8 h-12">Create custom anime characters.</p>
-                    <a href="/waifu"
-                        class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-purple-400 hover:text-purple-300 transition-colors">
                         Launch App <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
@@ -117,24 +105,23 @@
                 </div>
             </div>
 
-            <!-- Card 5: Narrative Game -->
+            <!-- Card 5: News -->
             <div
-                class="bg-slate-900 border border-slate-800 rounded-xl p-8 hover:border-emerald-500 transition-all group relative overflow-hidden">
+                class="bg-slate-900 border border-slate-800 rounded-xl p-8 hover:border-blue-500 transition-all group relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <i class="fas fa-book-open fa-6x text-emerald-500"></i>
+                    <i class="fas fa-globe fa-6x text-blue-500"></i>
                 </div>
                 <div class="relative z-10">
                     <div
-                        class="w-12 h-12 bg-emerald-900/30 rounded-lg flex items-center justify-center mb-6 text-emerald-400 border border-emerald-500/30">
-                        <i class="fas fa-terminal text-xl"></i>
+                        class="w-12 h-12 bg-blue-900/30 rounded-lg flex items-center justify-center mb-6 text-blue-400 border border-blue-500/30">
+                        <i class="fas fa-newspaper text-xl"></i>
                     </div>
-                    <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
-                        Cyberpunk Narrative
-                    </h2>
-                    <p class="text-slate-400 mb-8 h-12">Interactive story with choices and consequences in a neon-soaked
-                        future.</p>
-                    <a href="{{ url_for('narrative.index') }}"
-                        class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-emerald-400 hover:text-emerald-300 transition-colors">
+                    <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">News
+                        Aggregator</h2>
+                    <p class="text-slate-400 mb-8 h-12">Real-time headlines and global updates from multiple sources.
+                    </p>
+                    <a href="{{ url_for('news.index') }}"
+                        class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-blue-400 hover:text-blue-300 transition-colors">
                         Launch App <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
@@ -162,7 +149,51 @@
                 </div>
             </div>
 
-            <!-- Card 7: Justice Duel -->
+            <!-- Card 7: D&D Character Creator -->
+            <div
+                class="bg-slate-900 border border-slate-800 rounded-xl p-8 hover:border-violet-500 transition-all group relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fas fa-dice-d20 fa-6x text-violet-500"></i>
+                </div>
+                <div class="relative z-10">
+                    <div
+                        class="w-12 h-12 bg-violet-900/30 rounded-lg flex items-center justify-center mb-6 text-violet-400 border border-violet-500/30">
+                        <i class="fas fa-hat-wizard text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-violet-400 transition-colors">
+                        D&D Character Creator
+                    </h2>
+                    <p class="text-slate-400 mb-8 h-12">Create your fantasy character based on the role you want to
+                        play.</p>
+                    <a href="{{ url_for('dnd.index') }}"
+                        class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-violet-400 hover:text-violet-300 transition-colors">
+                        Launch App <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 8: Anime Character Creator -->
+            <div
+                class="bg-slate-900 border border-slate-800 rounded-xl p-8 hover:border-purple-500 transition-all group relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fas fa-heart fa-6x text-purple-500"></i>
+                </div>
+                <div class="relative z-10">
+                    <div
+                        class="w-12 h-12 bg-purple-900/30 rounded-lg flex items-center justify-center mb-6 text-purple-400 border border-purple-500/30">
+                        <i class="fas fa-magic text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors">Anime
+                        Character Creator</h2>
+                    <p class="text-slate-400 mb-8 h-12">Create custom anime characters.</p>
+                    <a href="{{ url_for('waifu.index') }}"
+                        class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-purple-400 hover:text-purple-300 transition-colors">
+                        Launch App <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 9: Justice Duel -->
             <div
                 class="bg-slate-900 border border-slate-800 rounded-xl p-8 hover:border-teal-500 transition-all group relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -184,37 +215,8 @@
                 </div>
             </div>
 
-            <!-- Card 8: D&D Character Creator -->
-            <div
-                class="bg-slate-900 border border-slate-800 rounded-xl p-8 hover:border-violet-500 transition-all group relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <i class="fas fa-dice-d20 fa-6x text-violet-500"></i>
-                </div>
-                <div class="relative z-10">
-                    <div
-                        class="w-12 h-12 bg-violet-900/30 rounded-lg flex items-center justify-center mb-6 text-violet-400 border border-violet-500/30">
-                        <i class="fas fa-hat-wizard text-xl"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-violet-400 transition-colors">
-                        D&D Character Creator
-                    </h2>
-                    <p class="text-slate-400 mb-8 h-12">Create your fantasy character based on the role you want to play.</p>
-                    <a href="{{ url_for('dnd.index') }}"
-                        class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-violet-400 hover:text-violet-300 transition-colors">
-                        Launch App <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Footer -->
-        <div class="text-center mt-12 text-slate-600 text-sm font-mono">
-            &copy; 2025 Milesenberg Digital. All systems nominal.
         </div>
 
     </div>
-
-</body>
-
-</html>
+</div>
+{% endblock %}

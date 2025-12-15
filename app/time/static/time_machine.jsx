@@ -176,7 +176,9 @@ const App = () => {
 
     // Auto-scroll to latest log
     useEffect(() => {
-        logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        if (logs.length > 1) {
+            logEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
     }, [logs]);
 
     // --- DATE MANIPULATION HANDLERS ---

@@ -1,29 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QFTL8TJLDJ"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+{% block title %}Chronos MK-V Time Machine{% endblock %}
 
-      gtag('config', 'G-QFTL8TJLDJ');
-    </script>
+{% block head_extra %}
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+{% endblock %}
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chronos MK-V Time Machine</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
+{% block content %}
+<div class="bg-black text-cyan-400 min-h-[calc(100vh-64px)]">
+  <div id="root"></div>
+</div>
+{% endblock %}
 
-<body class="bg-black text-cyan-400 min-h-screen">
-    <div id="root"></div>
-    <script type="text/babel" src="{{ url_for('time.static', filename='time_machine.jsx') }}"></script>
-</body>
-
-</html>
+{% block scripts %}
+<script type="text/babel" src="{{ url_for('time.static', filename='time_machine.jsx') }}"></script>
+{% endblock %}

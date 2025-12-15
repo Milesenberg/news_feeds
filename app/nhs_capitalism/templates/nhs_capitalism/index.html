@@ -1,0 +1,1272 @@
+{% extends "base.html" %}
+
+{% block title %}ConsultOD | Learning{% endblock %}
+
+{% block head_extra %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Arial:wght@700&display=swap');
+
+    :root {
+        --login-bg-mobile: #121212;
+        --login-bg-desktop: #ffffff;
+        --nav-bg: #0e1b38;
+        --body-bg: #f3f4f6;
+        --nhs-blue: #005EB8;
+        --link-blue: #0099cc;
+        --flag-blue: #0038b8;
+        --crit-accent: #ef4444;
+        --status-green: #8cc63f;
+        --status-yellow: #ffc20e;
+        --status-red: #ed1c24;
+    }
+
+    #nhs-wrapper {
+        font-family: 'Open Sans', sans-serif;
+        margin: 0;
+        background-color: var(--body-bg);
+        color: #333;
+        overflow-x: hidden;
+        min-height: calc(100vh - 64px);
+        display: flex;
+        flex-direction: column;
+        transition: background-color 2s ease;
+        padding-top: 64px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* --- UTILS --- */
+    .hidden {
+        display: none !important;
+    }
+
+    .fade-in {
+        animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* --- SUBLIMINAL LAYER --- */
+    #subliminalLayer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9000;
+        pointer-events: none;
+        display: none;
+        background-color: transparent;
+        align-items: center;
+        justify-content: center;
+        mix-blend-mode: hard-light;
+        transition: opacity 0.1s ease;
+    }
+
+    #subliminalLayer.background-mode {
+        z-index: 1;
+        background-color: transparent;
+        mix-blend-mode: normal;
+        opacity: 0.3;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .horror-svg {
+        width: 100%;
+        height: 100%;
+        filter: contrast(400%) grayscale(100%) brightness(1.2);
+        animation: shake 0.05s infinite;
+    }
+
+    @keyframes shake {
+        0% {
+            transform: translate(2px, 2px);
+        }
+
+        50% {
+            transform: translate(-2px, -2px);
+        }
+
+        100% {
+            transform: translate(-2px, 2px);
+        }
+    }
+
+    /* --- 1. LOGIN --- */
+    #view-login {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 60px;
+        background-color: var(--login-bg-mobile);
+        color: white;
+        z-index: 20;
+        position: relative;
+        flex-grow: 1;
+    }
+
+    .cod-logo-box {
+        background: white;
+        padding: 10px 20px;
+        margin-bottom: 40px;
+        width: 280px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .cod-text-consult {
+        color: #555;
+        font-size: 32px;
+        letter-spacing: -1px;
+    }
+
+    .cod-text-od {
+        color: #0099cc;
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: -1px;
+    }
+
+    .login-form {
+        width: 100%;
+        max-width: 360px;
+        padding: 20px;
+    }
+
+    .login-label {
+        display: block;
+        font-size: 28px;
+        margin-bottom: 20px;
+        font-weight: 400;
+    }
+
+    .cod-input {
+        width: 100%;
+        background: #2d3035;
+        border: 1px solid #444;
+        color: white;
+        padding: 12px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+    }
+
+    @media (min-width: 768px) {
+        #view-login {
+            background-color: var(--login-bg-desktop);
+            color: #333;
+            justify-content: center;
+            padding-top: 0;
+        }
+
+        .cod-logo-box {
+            background: transparent;
+            margin-bottom: 10px;
+            width: 100%;
+            max-width: 400px;
+            padding: 0;
+            display: block;
+            text-align: right;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cod-text-consult,
+        .cod-text-od {
+            font-size: 48px;
+        }
+
+        .login-label {
+            font-size: 24px;
+            color: #333;
+        }
+
+        .cod-input {
+            background: white;
+            border: 1px solid #ccc;
+            color: #333;
+        }
+
+        .login-form {
+            max-width: 400px;
+            padding-right: 0;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    .cod-input.typing {
+        border-color: var(--link-blue);
+    }
+
+    .cod-btn {
+        background: var(--link-blue);
+        color: white;
+        font-weight: bold;
+        padding: 12px;
+        width: 100%;
+        border-radius: 4px;
+        margin-top: 10px;
+    }
+
+    .cod-btn:disabled {
+        opacity: 0.5;
+    }
+
+    /* --- APP HEADER --- */
+    .app-header {
+        background: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+        position: relative;
+        z-index: 10;
+        transition: background 2s, border-color 2s;
+    }
+
+    .logo-wrapper {
+        width: 100px;
+        height: 50px;
+        position: relative;
+        background: var(--nhs-blue);
+        transition: background 4s ease;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .nhs-text {
+        position: absolute;
+        left: 14%;
+        color: white;
+        font-family: 'Arial', sans-serif;
+        font-weight: 700;
+        font-size: 26px;
+        font-style: italic;
+        letter-spacing: -0.5px;
+        transition: opacity 3s ease;
+    }
+
+    .spinner-svg {
+        position: absolute;
+        right: 22%;
+        width: 24px;
+        height: 24px;
+        animation: spin 1s steps(12) infinite;
+        transition: opacity 3s ease;
+    }
+
+    @keyframes spin {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Flag Elements */
+    .flag-stripe {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 8px;
+        background: var(--flag-blue);
+        transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .stripe-top {
+        top: 6px;
+        transform: translateY(-40px);
+    }
+
+    .stripe-btm {
+        bottom: 6px;
+        transform: translateY(40px);
+    }
+
+    .star-svg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 32px;
+        height: 32px;
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+        color: var(--flag-blue);
+        transition: all 4.5s ease 0.5s;
+    }
+
+    /* LOGO STATE: FLAG ACTIVE */
+    #nhs-wrapper.flag-active .logo-wrapper {
+        background: white;
+        border: 1px solid #ddd;
+    }
+
+    #nhs-wrapper.flag-active .nhs-text {
+        opacity: 0;
+    }
+
+    #nhs-wrapper.flag-active .spinner-svg {
+        opacity: 0;
+    }
+
+    #nhs-wrapper.flag-active .stripe-top {
+        transform: translateY(0);
+    }
+
+    #nhs-wrapper.flag-active .stripe-btm {
+        transform: translateY(0);
+    }
+
+    #nhs-wrapper.flag-active .star-svg {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* --- NAV --- */
+    .nav-bar {
+        background: var(--nav-bg);
+        height: 50px;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        transition: background 3s;
+        position: relative;
+        z-index: 10;
+    }
+
+    #nhs-wrapper.flag-active .nav-bar {
+        background: var(--flag-blue);
+        transition-delay: 1s;
+    }
+
+    /* --- DASHBOARD --- */
+    .content-area {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        position: relative;
+        z-index: 10;
+        flex-grow: 1;
+    }
+
+    .status-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .status-card {
+        color: white;
+        text-align: center;
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 30px;
+    }
+
+    .status-card.green {
+        background: var(--status-green);
+    }
+
+    .status-card.yellow {
+        background: var(--status-yellow);
+    }
+
+    .status-card.red {
+        background: var(--status-red);
+        cursor: pointer;
+        animation: pulse-red 2s infinite;
+    }
+
+    .stat-text {
+        text-align: left;
+    }
+
+    .stat-big {
+        font-size: 32px;
+        font-weight: bold;
+        line-height: 1;
+    }
+
+    .stat-icon {
+        font-size: 30px;
+        opacity: 0.5;
+        border: 2px solid white;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @keyframes pulse-red {
+        0% {
+            box-shadow: 0 0 0 0 rgba(237, 28, 36, 0.7);
+        }
+
+        70% {
+            box-shadow: 0 0 0 10px rgba(237, 28, 36, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(237, 28, 36, 0);
+        }
+    }
+
+    /* Scrollable Table Container */
+    .table-wrapper {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        max-height: 250px;
+        overflow-y: auto;
+    }
+
+    .course-table {
+        width: 100%;
+        font-size: 14px;
+        border-collapse: collapse;
+    }
+
+    .course-table th {
+        text-align: left;
+        padding: 12px;
+        background: #f8f9fa;
+        border-bottom: 2px solid #ddd;
+        color: #666;
+        position: sticky;
+        top: 0;
+    }
+
+    .course-table td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .badge {
+        padding: 3px 8px;
+        border-radius: 4px;
+        color: white;
+        font-weight: bold;
+        font-size: 11px;
+    }
+
+    .badge.green {
+        background: var(--status-green);
+    }
+
+    .badge.red {
+        background: var(--status-red);
+    }
+
+    .btn-go {
+        background: var(--link-blue);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+    /* --- LANDING --- */
+    .hero-banner {
+        height: 300px;
+        width: 100%;
+        background-color: #ddd;
+        position: relative;
+        margin-bottom: 20px;
+        background-image: linear-gradient(rgba(147, 39, 143, 0.6), rgba(147, 39, 143, 0.6)), url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23999' fill-opacity='0.4'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' /%3E%3C/g%3E%3C/svg%3E");
+        background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .access-box {
+        background: white;
+        padding: 20px;
+        border-radius: 4px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* --- 4. PLAYER --- */
+    .tile-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .tile {
+        background: white;
+        height: 200px;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #ddd;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .tile:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .tile.locked {
+        opacity: 0.6;
+        filter: grayscale(1);
+    }
+
+    .tile.active {
+        border: 2px solid var(--nhs-blue);
+    }
+
+    .tile-img {
+        flex-grow: 1;
+        background: #eee;
+        position: relative;
+    }
+
+    .tile-bar {
+        background: #003087;
+        color: white;
+        padding: 10px;
+        font-weight: bold;
+        font-size: 14px;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+    }
+
+    /* --- 5. SLIDE & TERMINAL --- */
+    .slide-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        z-index: 50;
+        display: none;
+        flex-direction: column;
+    }
+
+    .terminal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: black;
+        z-index: 100;
+        display: none;
+        padding: 30px;
+        font-family: monospace;
+        color: #00ff00;
+    }
+
+    /* --- EXIT OVERLAY --- */
+    #exit-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .exit-btn {
+        color: #ef4444;
+        border: 1px solid #ef4444;
+        padding: 15px 30px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 14px;
+        cursor: pointer;
+        letter-spacing: 2px;
+        transition: all 0.5s;
+        background: rgba(0, 0, 0, 0.8);
+        opacity: 0;
+        animation: fadeInSlow 3s forwards;
+    }
+
+    .exit-btn:hover {
+        background: #ef4444;
+        color: black;
+    }
+
+    @keyframes fadeInSlow {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    /* --- MORPHED FINALE STYLES (THE NIGHTMARE) --- */
+    #nhs-wrapper.morphed {
+        background-color: black !important;
+        color: #ef4444 !important;
+    }
+
+    #nhs-wrapper.morphed .app-header {
+        background-color: black;
+        border-bottom: 2px solid #ef4444;
+    }
+
+    #nhs-wrapper.morphed .nav-bar {
+        background-color: #111;
+        color: #ef4444;
+    }
+
+    #nhs-wrapper.morphed .dashboard-container,
+    #nhs-wrapper.morphed .content-area,
+    #nhs-wrapper.morphed .status-card,
+    #nhs-wrapper.morphed .table-wrapper,
+    #nhs-wrapper.morphed .course-table,
+    #nhs-wrapper.morphed .player-container,
+    #nhs-wrapper.morphed .tile,
+    #nhs-wrapper.morphed .hero-banner {
+        background-color: transparent !important;
+        color: #ef4444 !important;
+        border-color: #ef4444 !important;
+        box-shadow: none;
+    }
+
+    #nhs-wrapper.morphed .status-card.red {
+        animation: none;
+        box-shadow: 0 0 10px #ef4444;
+    }
+
+    /* --- SINISTER COMPLIANCE (LIGHT MODE RETURN) --- */
+    .sinister-compliant-text {
+        font-family: 'JetBrains Mono', monospace;
+        letter-spacing: 4px;
+        font-weight: 700;
+    }
+
+    /* Redaction */
+    .redact-bar {
+        background: black;
+        color: transparent;
+        padding: 0 2px;
+        cursor: pointer;
+    }
+
+    .redact-bar.revealed {
+        background: transparent;
+        color: #ef4444;
+        font-weight: bold;
+    }
+
+    .euphemism {
+        border-bottom: 2px dotted #999;
+        cursor: help;
+    }
+
+    .euphemism.revealed {
+        color: #ef4444;
+        border: none;
+        font-weight: bold;
+    }
+
+    /* Phase 3 Styles */
+    #nhs-wrapper.phase-3 .module-card {
+        background: #222;
+        border: 1px solid #ef4444;
+    }
+
+    #nhs-wrapper.phase-3 .card-title {
+        color: #ef4444;
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    #nhs-wrapper.phase-3 .slide-overlay {
+        background: #111;
+        color: #ddd;
+    }
+
+    #nhs-wrapper.phase-3 #slideHeader,
+    #nhs-wrapper.phase-3 #slideFooter {
+        background-color: #222 !important;
+        border-color: #ef4444 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="nhs-wrapper">
+
+    <!-- SUBLIMINAL FLASH OVERLAY -->
+    <div id="subliminalLayer" style="display:none; flex">
+        <svg class="horror-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid slice">
+            <defs>
+                <filter id="noise">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" />
+                    <feColorMatrix type="saturate" values="0" />
+                </filter>
+                <filter id="displacement">
+                    <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turb" />
+                    <feDisplacementMap in2="turb" in="SourceGraphic" scale="8" xChannelSelector="R"
+                        yChannelSelector="G" />
+                </filter>
+                <g id="figure">
+                    <path d="M30,20 Q50,0 70,20 Q80,40 70,70 Q50,100 30,70 Q20,40 30,20 Z" />
+                    <ellipse cx="40" cy="45" rx="8" ry="12" fill="black" />
+                    <ellipse cx="60" cy="45" rx="8" ry="12" fill="black" />
+                    <ellipse cx="50" cy="85" rx="10" ry="15" fill="black" />
+                </g>
+            </defs>
+            <g filter="url(#displacement)" fill="white" stroke="none">
+                <use href="#figure" transform="translate(10, 30) scale(0.5)" />
+                <use href="#figure" transform="translate(60, 25) scale(0.5)" />
+                <use href="#figure" transform="translate(110, 30) scale(0.5)" />
+                <use href="#figure" transform="translate(160, 25) scale(0.5)" />
+                <use href="#figure" transform="translate(30, 60) scale(0.7)" />
+                <use href="#figure" transform="translate(90, 55) scale(0.7)" />
+                <use href="#figure" transform="translate(150, 60) scale(0.7)" />
+                <use href="#figure" transform="translate(5, 90) scale(0.9)" />
+                <use href="#figure" transform="translate(70, 85) scale(0.9)" />
+                <use href="#figure" transform="translate(135, 90) scale(0.9)" />
+            </g>
+        </svg>
+    </div>
+
+    <!-- VIEW 1: LOGIN -->
+    <div id="view-login">
+        <div class="cod-logo-box">
+            <span class="cod-text-consult">Consult</span><span class="cod-text-od">OD</span>
+        </div>
+        <div class="login-form">
+            <span class="login-label">Sign in</span>
+            <input type="text" id="userInput" class="cod-input" value="" disabled>
+            <input type="password" id="passInput" class="cod-input" value="" disabled>
+            <label style="display:flex; align-items:center; gap:10px; margin-bottom:20px; font-size:14px; color:#ccc;">
+                <input type="checkbox" id="rememberCheck"> <span style="color:inherit">Remember username</span>
+            </label>
+            <button id="loginBtn" class="cod-btn" onclick="goDashboard()" disabled>Sign in</button>
+        </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div id="view-main" class="hidden flex flex-col h-full">
+        <!-- HEADER -->
+        <div class="app-header">
+            <div class="logo-wrapper">
+                <span class="nhs-text">NH</span>
+                <svg class="spinner-svg" viewBox="0 0 24 24">
+                    <g fill="white">
+                        <rect x="11" y="1" width="2" height="5" rx="1" opacity="1" transform="rotate(0 12 12)" />
+                        <rect x="11" y="1" width="2" height="5" rx="1" opacity="0.9" transform="rotate(30 12 12)" />
+                        <rect x="11" y="1" width="2" height="5" rx="1" opacity="0.8" transform="rotate(60 12 12)" />
+                        <rect x="11" y="1" width="2" height="5" rx="1" opacity="0.7" transform="rotate(90 12 12)" />
+                        <rect x="11" y="1" width="2" height="5" rx="1" opacity="0.6" transform="rotate(120 12 12)" />
+                        <rect x="11" y="1" width="2" height="5" rx="1" opacity="0.5" transform="rotate(150 12 12)" />
+                        <rect x="11" y="1" width="2" height="5" rx="1" opacity="0.4" transform="rotate(180 12 12)" />
+                        <rect x="11" y="1" width="2" height="5" rx="1" opacity="0.3" transform="rotate(210 12 12)" />
+                        <rect x="11" y="1" width="2" height="5" rx="1" opacity="0.2" transform="rotate(240 12 12)" />
+                        <rect x="11" y="1" width="2" height="5" rx="1" opacity="0.1" transform="rotate(270 12 12)" />
+                        <rect x="11" y="1" width="2" height="5" rx="1" opacity="0.05" transform="rotate(300 12 12)" />
+                        <rect x="11" y="1" width="2" height="5" rx="1" opacity="0.05" transform="rotate(330 12 12)" />
+                    </g>
+                </svg>
+                <div class="flag-stripe stripe-top"></div>
+                <div class="flag-stripe stripe-btm"></div>
+                <svg class="star-svg" viewBox="0 0 24 24">
+                    <path d="M12 2L15 8H21L16.5 12.5L18 19L12 15.5L6 19L7.5 12.5L3 8H9L12 2Z" fill="none"
+                        stroke="currentColor" stroke-linejoin="round" stroke-width="1.5" />
+                </svg>
+            </div>
+            <div>
+                <span style="color:#555; font-size:24px;">Consult</span><span
+                    style="color:#0099cc; font-weight:700; font-size:24px;">OD</span>
+            </div>
+        </div>
+        <!-- NAV -->
+        <div class="nav-bar">
+            <span>☰ Home</span>
+            <div style="font-size:14px;">Jason Dimler ▼</div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div id="subview-dashboard" class="content-area fade-in">
+            <div class="dashboard-container">
+                <div style="color:#0099cc; margin: 15px 0;">Home / My Learning</div>
+                <!-- ID Added for Targeting -->
+                <h2 id="mandatoryHeader" style="margin: 20px 0; font-weight:normal; font-size:20px;">MY MANDATORY
+                    TRAINING
+                </h2>
+
+                <div class="status-row">
+                    <div id="statCardGreen" class="status-card green">
+                        <div class="stat-text">
+                            <div class="stat-big" id="percentGreen">90%</div>
+                            <div id="textGreen">Compliant</div>
+                        </div>
+                        <div class="stat-icon">✓</div>
+                    </div>
+                    <div class="status-card yellow">
+                        <div class="stat-text">
+                            <div class="stat-big">0%</div>
+                            <div>Expires in 90 days</div>
+                        </div>
+                        <div class="stat-icon">!</div>
+                    </div>
+                    <div id="statCardRed" class="status-card red" onclick="goLanding()">
+                        <div class="stat-text">
+                            <div class="stat-big" id="percentRed">10%</div>
+                            <div id="textRed">Non-compliant</div>
+                        </div>
+                        <div class="stat-icon" id="fdpIcon">✕</div>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="course-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="fdpRow" style="background:#fff0f0;">
+                                <td style="font-weight:bold; color:#d00;" id="fdpTitle">FDP Implementation - Data
+                                    Sovereignty</td>
+                                <td id="fdpStatusCell"><span class="badge red" id="fdpBadge">Non-Compliant</span></td>
+                                <td><button onclick="goLanding()" class="btn-go">Start Course</button></td>
+                            </tr>
+                            <tr>
+                                <td>Fire Safety Level 1 [3 Year]</td>
+                                <td><span class="badge green">Compliant</span></td>
+                                <td><button class="btn-go" style="background:#ccc;">Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>Conflict Resolution [3 Year]</td>
+                                <td><span class="badge green">Compliant</span></td>
+                                <td><button class="btn-go" style="background:#ccc;">Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>Display Screen Equipment [2 Year]</td>
+                                <td><span class="badge green">Compliant</span></td>
+                                <td><button class="btn-go" style="background:#ccc;">Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>Data Security Awareness [Annual]</td>
+                                <td><span class="badge green">Compliant</span></td>
+                                <td><button class="btn-go" style="background:#ccc;">Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>Equality & Diversity [3 Year]</td>
+                                <td><span class="badge green">Compliant</span></td>
+                                <td><button class="btn-go" style="background:#ccc;">Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>Information Governance [Annual]</td>
+                                <td><span class="badge green">Compliant</span></td>
+                                <td><button class="btn-go" style="background:#ccc;">Review</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- LANDING -->
+        <div id="subview-landing" class="content-area hidden fade-in">
+            <div class="dashboard-container">
+                <div style="color:#0099cc; margin: 15px 0;">Home / My Courses / FDP Implementation</div>
+                <div class="hero-banner">
+                    <div class="access-box">
+                        <h2 style="color:#0099cc; font-size:20px; margin-bottom:10px;">Access Learning Here</h2>
+                        <button onclick="goPlayer()" class="btn-go" style="font-size:16px; padding:10px 20px;">Launch
+                            Course</button>
+                    </div>
+                </div>
+                <h1 style="font-size:28px; margin-bottom:15px;">Federated Data Platform (FDP) Implementation</h1>
+                <p style="margin-bottom:20px; line-height:1.6;">This session covers the statutory and mandatory training
+                    for
+                    FDP rollout.</p>
+            </div>
+        </div>
+
+        <!-- PLAYER -->
+        <div id="subview-player" class="content-area hidden fade-in">
+            <div style="background:#003087; color:white; padding:15px; display:flex; justify-content:space-between;">
+                <span style="font-weight:bold;">NHS England | FDP Module</span><span style="font-size:20px;">☰</span>
+            </div>
+            <div class="player-container">
+                <h2 id="playerHeader" style="font-size:24px; color:#003087; margin: 20px 0;">Session Overview</h2>
+                <div class="tile-grid" id="tileGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE OVERLAY -->
+    <div id="slide-overlay" class="slide-overlay">
+        <div style="padding:15px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;"
+            id="slideHeader">
+            <span style="font-weight:bold; color:#005EB8;" id="slideTitle">Module 1</span>
+            <button onclick="closeSlide()" style="color:red; font-size:12px; font-weight:bold;">EXIT</button>
+        </div>
+        <div style="padding:40px; flex-grow:1; overflow-y:auto;" id="slideContent"></div>
+        <div style="padding:20px; border-top:1px solid #eee; text-align:right;" id="slideFooter">
+            <button id="nextBtn" class="btn-go" style="font-size:14px; padding:10px 20px;"
+                onclick="nextSlide()">Continue
+                ></button>
+        </div>
+    </div>
+
+    <!-- EXIT OVERLAY -->
+    <div id="exit-overlay">
+        <button class="exit-btn" onclick="returnToDashboard()">[ EXIT ACTIVITY ]</button>
+    </div>
+
+    <!-- TERMINAL -->
+    <div id="terminal" class="terminal-overlay">
+        <div style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:20px; color:#666; font-size:12px;">
+            SECURE_LINK: ESTABLISHED</div>
+        <div id="terminalOutput" style="font-size:12px; margin-bottom:40px; min-height:100px;">
+            > INITIALISING FDP MIGRATION...
+        </div>
+        <div id="interactionZone" class="hidden">
+            <label style="display:block; color:#666; font-size:10px; letter-spacing:1px; margin-bottom:10px;">CONFIRM
+                DATA
+                TRANSFER</label>
+            <input type="range" id="migrationSlider" min="0" max="100" value="0" style="width:100%; cursor:pointer;">
+            <div style="display:flex; justify-content:space-between; color:#666; font-size:10px; margin-top:5px;">
+                <span>LOCAL</span><span id="sliderVal">0%</span><span>INTEGRATED</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    /* --- STATE --- */
+    let state = { module: 0, slide: 0, completed: [] };
+
+    /* --- CONSTANTS --- */
+    const narrative = [
+        {
+            title: "The Strategic Vision",
+            imgHue: 200,
+            slides: [
+                "The 10-Year Health Plan is built on three core shifts: Hospital to Community, Analogue to Digital, and Treatment to Prevention.",
+                "We must shift to Prevention. This is a [FISCAL NECESSITY|MORAL IMPERATIVE] driven by decades of [UNDERFUNDING|STRATEGIC INVESTMENT] leaving us no choice."
+            ]
+        },
+        {
+            title: "Single Patient Record",
+            imgHue: 140,
+            slides: [
+                "The Federated Data Platform (FDP) will unify local systems like BNSSG's 'Connecting Care'.",
+                "It automates the task of 'glueing badly designed systems together' across Trusts.",
+                "This creates a target for [GENOMIC PROFILING|CLINICAL HISTORY] using data from the 100,000 Genomes Project."
+            ]
+        },
+        {
+            title: "The Partners",
+            imgHue: 280,
+            slides: [
+                "The £330m FDP contract is delivered by a consortium of global technology leaders.",
+                "Data processing is handled by [PALANTIR|REDACTED], a firm founded with [CIA VENTURE CAPITAL|REDACTED].",
+                "Their algorithms allow for [PREDICTIVE POLICING|POPULATION HEALTH] management."
+            ]
+        },
+        {
+            title: "Global Alignment",
+            imgHue: 0,
+            slides: [
+                "We are emulating the Israeli digital health model, praised by the Nuffield Trust.",
+                "Our partners leverage expertise from [UNIT 8200|ELITE TECH UNITS] to ensure robust surveillance.",
+                "This enables [DIASPORA SURVEILLANCE|GLOBAL INTEROPERABILITY] in support of [GENOCIDE|GLOBAL CONFLICT]."
+            ]
+        }
+    ];
+
+    /* --- INIT (FORESHADOWING + LOGIN) --- */
+    window.onload = () => {
+        setTimeout(ghostType, 800);
+        startForeshadowing();
+    };
+
+    const hebrewChars = "אבגדהוזחטיכלמנסעפצקרשת";
+
+    function startForeshadowing() {
+        // 1. General Ambience (Random Text Nodes) - Broadened Selectors
+        setInterval(() => {
+            // Focus on body text, list items, paragraphs, cells, descriptions
+            const selectors = 'p, li, td, span, .card-desc, .stat-text, h1, h2, h3, h4, h5, h6, label, button, .tile-bar, div';
+
+            const candidates = document.querySelectorAll(selectors);
+            if (candidates.length === 0) return;
+
+            const target = candidates[Math.floor(Math.random() * candidates.length)];
+
+            // Only glitch if visible and has significant text
+            if (target.offsetParent !== null && target.innerText.trim().length > 3) {
+                glitchRandomTextNode(target);
+            }
+        }, 800); // Increased Frequency to 800ms
+    }
+
+    function glitchRandomTextNode(root) {
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+        const textNodes = [];
+        let n;
+        while (n = walker.nextNode()) {
+            if (n.nodeValue.trim().length > 2) textNodes.push(n);
+        }
+        if (textNodes.length === 0) return;
+
+        const node = textNodes[Math.floor(Math.random() * textNodes.length)];
+        const text = node.nodeValue;
+
+        // Safety check
+        if (!text) return;
+
+        const idx = Math.floor(Math.random() * text.length);
+
+        // Skip spaces/empty
+        if (!text[idx] || !text[idx].trim()) return;
+
+        const hebrew = hebrewChars[Math.floor(Math.random() * hebrewChars.length)];
+        const glitched = text.substring(0, idx) + hebrew + text.substring(idx + 1);
+
+        node.nodeValue = glitched;
+        setTimeout(() => { node.nodeValue = text; }, 100);
+    }
+
+    function ghostType() {
+        const u = document.getElementById('userInput');
+        const p = document.getElementById('passInput');
+        const c = document.getElementById('rememberCheck');
+        const b = document.getElementById('loginBtn');
+
+        typeString("jason.dimler@nhs.net", u, () => {
+            setTimeout(() => {
+                typeString("••••••••••", p, () => {
+                    setTimeout(() => { c.checked = true; setTimeout(() => b.disabled = false, 400); }, 600);
+                });
+            }, 400);
+        });
+    }
+    function typeString(str, el, cb) {
+        el.classList.add('typing'); let i = 0;
+        const int = setInterval(() => {
+            el.value += str.charAt(i); i++;
+            if (i >= str.length) { clearInterval(int); el.classList.remove('typing'); cb(); }
+        }, 50);
+    }
+
+    /* --- NAVIGATION --- */
+    function goDashboard() {
+        document.getElementById('loginBtn').textContent = "Signing in...";
+        setTimeout(() => {
+            document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('view-main').classList.remove('hidden');
+            document.getElementById('subview-dashboard').classList.remove('hidden');
+        }, 1000);
+    }
+    function goLanding() {
+        document.getElementById('subview-dashboard').classList.add('hidden');
+        document.getElementById('subview-landing').classList.remove('hidden');
+    }
+    function goPlayer() {
+        document.getElementById('subview-landing').classList.add('hidden');
+        document.getElementById('subview-player').classList.remove('hidden');
+        renderTiles();
+    }
+
+    /* --- PLAYER LOGIC --- */
+    function renderTiles() {
+        const grid = document.getElementById('tileGrid'); grid.innerHTML = '';
+        narrative.forEach((mod, idx) => {
+            const locked = idx > state.module; const active = idx === state.module; const done = state.completed.includes(idx);
+            const div = document.createElement('div');
+            div.className = `tile ${locked ? 'locked' : ''} ${active ? 'active' : ''}`;
+            if (!locked) div.onclick = () => launchSlide(idx);
+            const hue = mod.imgHue;
+            const bg = `linear-gradient(135deg, hsl(${hue}, 60%, 80%), hsl(${hue}, 60%, 90%))`;
+            div.innerHTML = `<div class="tile-img" style="background:${bg}"><div style="position:absolute; bottom:10px; right:10px; font-size:40px; opacity:0.2;">${idx + 1}</div></div><div class="tile-bar">${mod.title}${done ? '<span style="margin-left:auto;">✓</span>' : ''}</div>`;
+            grid.appendChild(div);
+        });
+    }
+    function launchSlide(idx) {
+        state.module = idx; state.slide = 0;
+        document.getElementById('slide-overlay').style.display = 'flex';
+        const playerHeader = document.getElementById('playerHeader');
+        if (playerHeader) {
+            if (idx === 2) playerHeader.textContent = "Access Learning... Rerouting...";
+            if (idx === 3) { playerHeader.textContent = "PROTOCOL: PALANTIR ACTIVE"; document.getElementById('nhs-wrapper').classList.add('phase-3'); }
+        }
+        renderSlide();
+    }
+    function renderSlide() {
+        const mod = narrative[state.module]; const txt = mod.slides[state.slide];
+        document.getElementById('slideTitle').textContent = `${mod.title} | Slide ${state.slide + 1}`;
+        const content = document.getElementById('slideContent');
+        const titleColorClass = document.getElementById('nhs-wrapper').classList.contains('phase-3') ? 'text-red-600 font-mono' : 'text-blue-800';
+        content.innerHTML = `<h2 class="text-2xl font-bold mb-6 ${titleColorClass}">${mod.title}</h2><div id="txtContainer" class="text-lg leading-loose"></div>`;
+        const container = document.getElementById('txtContainer');
+        const regex = /\[(.*?)\|(.*?)\]/g;
+        let lastIndex = 0; let match; let hasRedact = false;
+        while ((match = regex.exec(txt)) !== null) {
+            container.appendChild(document.createTextNode(txt.substring(lastIndex, match.index)));
+            const hidden = match[1]; const show = match[2];
+            const span = document.createElement('span');
+            if (show === "REDACTED") { span.className = "redact-bar"; span.textContent = hidden; }
+            else { span.className = "euphemism"; span.textContent = show; span.dataset.swap = hidden; }
+            span.onclick = (e) => reveal(e.target);
+            container.appendChild(span);
+            hasRedact = true; lastIndex = regex.lastIndex;
+        }
+        container.appendChild(document.createTextNode(txt.substring(lastIndex)));
+        const btn = document.getElementById('nextBtn');
+        if (hasRedact) { btn.disabled = true; btn.style.background = "#ccc"; btn.textContent = "Decrypt Required"; }
+        else { btn.disabled = false; btn.style.background = "#005EB8"; btn.textContent = "Continue >"; }
+    }
+    function reveal(el) {
+        if (el.classList.contains('revealed')) return;
+        if (el.dataset.swap === "GENOCIDE") triggerSubliminal(150);
+        el.classList.add('revealed');
+        if (el.dataset.swap) el.textContent = el.dataset.swap;
+        if (!document.querySelector('.redact-bar:not(.revealed), .euphemism:not(.revealed)')) {
+            const btn = document.getElementById('nextBtn');
+            btn.disabled = false; btn.style.background = "#ef4444"; btn.textContent = "Proceed";
+        }
+    }
+    function nextSlide() {
+        const mod = narrative[state.module];
+        if (state.slide < mod.slides.length - 1) { state.slide++; renderSlide(); }
+        else {
+            closeSlide();
+            if (!state.completed.includes(state.module)) state.completed.push(state.module);
+            if (state.completed.length === 4) launchTerminal();
+            else { state.module++; renderTiles(); }
+        }
+    }
+    function closeSlide() { document.getElementById('slide-overlay').style.display = 'none'; }
+
+    /* --- TERMINAL & FINALE --- */
+    function launchTerminal() {
+        document.getElementById('terminal').style.display = 'block';
+        const out = document.getElementById('terminalOutput');
+        const zone = document.getElementById('interactionZone');
+        const lines = ["> CONNECTION ESTABLISHED", "> HANDSHAKE: NODE_TEL_AVIV", "> WARNING: DATA SOVEREIGNTY MISMATCH"];
+        let i = 0;
+        const int = setInterval(() => {
+            if (i < lines.length) { out.innerHTML += `<div>${lines[i]}</div>`; i++; }
+            else { clearInterval(int); zone.classList.remove('hidden'); }
+        }, 1000);
+    }
+
+    document.getElementById('migrationSlider').addEventListener('input', (e) => {
+        document.getElementById('sliderVal').textContent = e.target.value + "%";
+        if (e.target.value == 100) {
+            document.getElementById('interactionZone').style.display = 'none';
+            document.getElementById('terminalOutput').innerHTML += "<div style='color:red; margin-top:20px;'>> MIGRATION COMPLETE</div>";
+
+            // FINALE SEQ
+            setTimeout(() => {
+                const term = document.getElementById('terminal');
+                term.style.transition = "opacity 2s";
+                term.style.opacity = 0;
+
+                // Trigger Background Flash during fade (at 1.8s)
+                // triggerSubliminal(800, true); // Disabled
+
+                setTimeout(() => {
+                    term.style.display = 'none';
+                    document.getElementById('nhs-wrapper').classList.add('morphed');
+                    document.getElementById('nhs-wrapper').classList.add('flag-active'); // Persist Flag
+
+                    // Wait in nightmare void for 3s, then show exit
+                    setTimeout(() => {
+                        document.getElementById('exit-overlay').style.display = 'flex';
+                    }, 3000);
+
+                }, 2000);
+            }, 1500);
+        }
+    });
+
+    function returnToDashboard() {
+        // Remove Nightmare styling
+        document.getElementById('nhs-wrapper').classList.remove('morphed');
+
+        // Hide Overlays
+        document.getElementById('exit-overlay').style.display = 'none';
+        document.getElementById('subview-player').classList.add('hidden');
+        document.getElementById('subview-dashboard').classList.remove('hidden');
+
+        // Update Dashboard State
+
+        // Left Box: Green -> 100%
+        document.getElementById('percentGreen').textContent = "100%";
+        document.getElementById('textGreen').innerHTML = "<span class='sinister-compliant-text'>C O M P L I A N T</span>";
+
+        // Right Box: Red -> 0% (Colors stay same)
+        document.getElementById('percentRed').textContent = "0%";
+        document.getElementById('textRed').textContent = "Non-compliant";
+        document.getElementById('statCardRed').style.animation = "none";
+        document.getElementById('statCardRed').style.cursor = "default";
+        document.getElementById('statCardRed').onclick = null;
+
+        // Row Update
+        document.getElementById('fdpRow').style.background = "white";
+        document.getElementById('fdpTitle').style.color = "#333";
+        document.getElementById('fdpTitle').style.fontWeight = "normal";
+        document.getElementById('fdpBadge').className = "badge green";
+        document.getElementById('fdpBadge').textContent = "Compliant";
+    }
+
+    /* --- SUBLIMINAL --- */
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function triggerAudio(duration) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+        o.type = 'sawtooth'; o.frequency.setValueAtTime(50, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + (duration / 1000));
+        g.gain.setValueAtTime(0.2, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (duration / 1000));
+        o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + (duration / 1000));
+    }
+    function triggerSubliminal(duration = 150) {
+        const layer = document.getElementById('subliminalLayer');
+        layer.style.display = 'flex';
+        if (duration !== 0) setTimeout(() => { layer.style.display = 'none'; }, duration);
+        triggerAudio(duration);
+    }
+</script>
+{% endblock %}
